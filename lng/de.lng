@@ -1,0 +1,271 @@
+// Translation File for SmallTune
+// Language: German
+// Author: Daniel Gilbert
+// Mail: me@smalltune.net
+
+// Must match Application Minor Version
+// e.g. "0.3" will work for SmallTune 0.3.0, SmallTune 0.3.1, SmallTune 0.3.2 and so on, but not SmallTune 0.4.0...
+TRANS_FILE_VERSION=0.3;
+
+//Short Description:
+//
+//The default Format is:
+//
+//index:'Text';
+//
+//In case you need a ' in your text (e.g.: isn't), you can write it like this:
+//
+//0:'This isn\'t a problem';
+//
+//In case you need a linebreak, this can be done this way:
+//
+//0:'This is the first line \n this is the next line';
+//
+// NEVER EVER change the index and the line order. Doing so will result in an error and the language won't be loaded
+
+//Windows XP or NT 4.0 needed!
+0:'Windows XP oder NT 4.0 benötigt!';
+//[Playing]
+1:'[Spiele]';
+//[Pause]
+2:'[Pause]';
+//[Stop]
+3:'[Stopp]';
+//Adding files... please wait...
+4:'Füge Dateien hinzu...';
+//Previous track
+5:'Vorheriges Lied';
+//Stop
+6:'Stopp';
+//Play/Pause
+7:'Play/Pause';
+//Next Track
+8:'Nächstes Lied';
+//Playlist...
+9:'Playlist...';
+//Add file(s)...
+10:'Datei(en) hinzufügen...';
+//Add folder...
+11:'Ordner hinzufügen...';
+//URL Management
+12:'URL Verwaltung...';
+//Repeat Playlist
+13:'Playlist wiederholen';
+//Shuffle
+14:'Zufall';
+//Help...
+15:'Hilfe...';
+//Info...
+16:'Info...';
+//Close
+17:'Beenden';
+//Choose a folder...
+18:'Ordner wählen...';
+//#
+19:'#';
+//Title
+20:'Titel';
+//Artist
+21:'Künstler';
+//Filter by
+22:'Filtern nach';
+//SmallTune is already running.
+23:'SmallTune läuft bereits.';
+//No Title...
+24:'Kein Titel...';
+//No Artist...
+25:'Kein Künstler...';
+//No Album...
+26:'Kein Album...';
+//Please enter a valid URL
+27:'Bitte geben Sie eine gültige URL ein...';
+//All files added!
+28:'Alle Dateien hinzugefügt!';
+//Finished!
+29:'Fertig!';
+//Read:
+30:'Lese: ';
+//Initializaing:
+31:'Initialisierung: ';
+//Please wait...
+32:'Bitte warten...';
+//Would you like to use SmallTune on an USB-Stick, SD-Card or similiar ?\n\n (Otherwise, the database will be saved in the current User''s application folder [recommended for Vista & 7])
+33:'Möchten Sie SmallTune auf einem USB-Stick, einer SD-Karte oder ähnlichem nutzen ?\n\n (Ansonsten wird die Datenbank im Anwendungsverzeichnis des aktuellen Nutzers gespeichert [empfohlen für Vista & 7])';
+//Where to save?
+34:'Wo soll gespeichert werden?';
+//supported files (*.mp3,*.mp2,*.wma,*.flac,*.ogg)|*.mp3;*.mp2;*.wma;*.flac;*.ogg|MP3 (*.mp3)|*.mp3|WMA (*.wma)|*.wma|FLAC (*.flac)|*.flac|OGG (*.ogg)|*.ogg
+35:'Unterstützte Formate (*.mp3,*.mp2,*.wma,*.flac,*.ogg)|*.mp3;*.mp2;*.wma;*.flac;*.ogg|MP3 (*.mp3)|*.mp3|WMA (*.wma)|*.wma|FLAC (*.flac)|*.flac|OGG (*.ogg)|*.ogg';
+//Do you want to delete the selected item(s)?
+36:'Sollen die ausgewählten Einträge gelöscht werden?';
+//Confirmation needed
+37:'Bestätigung erwartet';
+//Do you want to clear the playlist?
+38:'Möchten Sie die Playlist leeren?';
+//Confirmation needed
+39:'Bestätigung erwartet';
+//When using Windows 7, please keep in mind that you have to set the Notification Icon in the Taskbar to be permanently visible.
+40:'Sollten Sie Windows 7 nutzen, denken Sie bitte daran, dass Benachrichtigungs-Icon auf dauerhaft sichtbar zu setzen.';
+//Information
+41:'Information';
+//Unknown
+42:'Unbekannt';
+//URL could not be resolved
+43:'URL konnte nicht aufgelöst werden';
+//Play/Pause
+44:'Play/Pause';
+//Next
+45:'Nächster';
+//Previous
+46:'Vorheriger';
+//Playlist
+47:'Playlist';
+//Repeat
+48:'Wiederholen';
+//Shuffle
+49:'Zufall';
+//Look for artist at...
+50:'Nach Künstler suchen...';
+//Autohide
+51:'Autohide';
+//Add
+52:'Hinzufügen';
+//Play
+53:'Abspielen';
+//Station Title
+54:'Titel der Station';
+//Station URL
+55:'URL der Station';
+//Cancel
+56:'Abbrechen';
+//Please enter the url here...
+57:'Bitte URL hier eintragen...';
+//Please enter the title here...
+58:'Bitte Titel hier eintragen...';
+//Settings
+59:'Einstellungen...';
+//Toolbuttons
+60:'Datei(en) hinzufügen\0Ordner hinzufügen\0Alle entfernen\0Auswahl entfernen\0\0';
+//ALT
+61:'ALT';
+//CTRL
+62:'STRG';
+//SHIFT
+63:'UMSCH.';
+//Left Arrow Key
+64:'Pfeil Links';
+//Up Arrow Key
+65:'Pfeil Hoch';
+//Right Arrow Key
+66:'Pfeil Rechts';
+//Down Arrow Key
+67:'Pfeil Runter';
+//Space Key
+68:'Leertaste';
+//Home Key
+69:'Pos1';
+//End Key
+70:'Ende';
+//Page Up Key
+71:'Bild rauf';
+//Page Down
+72:'Bild runter';
+//F1
+73:'F1';
+//F2
+74:'F2';
+//F3
+75:'F3';
+//F4
+76:'F4';
+//F5
+77:'F5';
+//F6
+78:'F6';
+//F7
+79:'F7';
+//F8
+80:'F8';
+//F9
+81:'F9';
+//F10
+82:'F10';
+//F11
+83:'F11';
+//F13
+84:'F13';
+//F14
+85:'F14';
+//F15
+86:'F15';
+//F16
+87:'F16';
+//F17
+88:'F17';
+//F18
+89:'F18';
+//F19
+90:'F19';
+//F20
+91:'F20';
+//F21
+92:'F21';
+//F22
+93:'F22';
+//F23
+94:'F23';
+//F24
+95:'F24';
+//Category Name
+96:'Name der Kategorie';
+//Add Category
+97:'Kategorie hinzufügen';
+//Add URL
+98:'URL hinzufügen';
+//Start with Windows
+99:'Mit Windows starten';
+//Make window movable
+100:'Fenster verschiebbar machen';
+//Save window position
+101:'Fensterposition speichern';
+//Language
+102:'Sprache';
+//General
+103:'Allgemein';
+//Drag'n'Drop
+104:'Drag\'n\'Drop';
+//Play file after being dropped
+105:'Datei nach droppen abspielen';
+//Add File To Playlist
+106:'Datei zur Playlist hinzufügen';
+//Activate Multimedia Keys
+107:'Multimedia Tasten aktivieren';
+//Activate Hotkeys
+108:'Hotkeys aktivieren';
+//Ctrl
+109:'Strg';
+//Alt
+110:'Alt';
+//Shift
+111:'Umsch.';
+//Use 32bit Floating Data
+112:'32bit Wiedergabe nutzen';
+//Play as Mono
+113:'Mono abspielen';
+//Don't Use Hardware Acceleration
+114:'Hardwarebeschleunigung nutzen';
+//Technical
+115:'Technisches';
+//Hotkeys
+116:'Hotkeys';
+//play only
+117:'Nur abspielen';
+//add to database
+118:'Zur Datenbank hinzufügen';
+//stations
+119:'Stationen';
+//add
+120:'Hinzufügen';
+//add category
+121:'Kategorie';
+//delete selected
+122:'Ausgewählte löschen';

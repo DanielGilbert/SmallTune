@@ -1,0 +1,88 @@
+[+] Feature added
+[-] Bug fixed
+[*] Feature improved
+
+Version 0.3.1 (07-12-2009)
+===========================
+[+] ESC-Key closes Dialogs (Settings, URL Window)
+[+] Settings Dialog has Cancel/OK Buttons
+[+] When opening the Playlist Window, the focus is on the corresponding edit
+
+[*] Path to the DB is shown, if you have an old version db.
+
+[-] Used wrong handle in OpenFileDlg
+[-] Repeat mode couldn't be deactivated
+[-] Language hasn't been saved
+[-] Fixed bug in settings view
+[-] Fixed bug in internal default language
+[-] Huge leak in Display Class fixed (thx turboPASCAL!)
+[-] Multimedia key hook didn't work
+[-] Settings dialog could be open several times
+[-] Some cosmetics in several dialogs
+
+
+Version 0.3 (01-12-2009)
+===========================
+[+] Drag and Drop added
+[+] Hotkeys added
+[+] Window can be moved
+[+] Options Dialog added
+[+] Added logging functionality
+[+] Added URL management
+[+] SmallTune now speaks German too. :)
+[+] It selects the language automatically, can be changed on runtime.
+[+] SmallTune comes with its own User Agent, "SmallTune/0.3"
+[+] Playlist supports "Enter" Key.
+[+] When filtering the playlist, pressing the "Enter" Key will result in playing the first item being selected.
+
+[*] Design changes if an Internet Stream is being played
+[*] If the song title is way too long for the window, it "bounces" from right to left and back
+[*] Switched to Mozilla Public License because of the use of BASS as the audio lib
+
+[-] Crash fixed when clicking on "next" at activated Shuffle-Mode
+[-] Opening the playlist after playing an internet stream result in all items being selected
+[-] TNA-Tooltip didn't change
+
+Version 0.2.1 (15-11-2009)
+===========================
+[-] After restarting the explorer, the icon was lost.
+[-] After adding files oder folders, clicking and removing items from the playlsist without restarting failed
+[-] Different names for the same action
+[-] Position didn't change when Taskbar was replaced
+
+
+Version 0.2.0 (13-11-2009)
+===========================
+[+] Showing the main window on startup - less confusing. :)
+[+] Added more functionality to the playlist window
+[+] Highlighting the current track in the Playlist
+[+] Automatically scrolls the Playlist to the current track
+[+] turboPASCAL added word ellipsis for title
+[+] turboPASCAL added "Stay on top" functionality
+[+] He also redesigned the "AddURL" - Dialog
+[+] Titel scrolls if the text is too long
+[+] You can easily look for the artist on Google, Wikipedia (en) and MySpace
+[+] Tooltips added
+
+[*] Removed the stop button (did anyone use it?)
+[*] Switched to BASS 2.4.4
+[*] Switched Title And Artist
+[*] URLs are now stored in the main database
+[*] Display shows different info if a stream is played.
+[*] Small display redesign
+
+[-] Memory leak fixed
+[-] turboPASCAL fixed an error in his Open - Dialog.
+
+
+Version 0.1.1 (30-10-2009)
+===========================
+[+] Added Links to "Info..." and "Help..."
+[+] Items from the playlist can be deleted
+
+[-] Playing a new track without resuming from the pausing state caused an error
+
+
+Version 0.1 (30-10-2009)
+===========================
+[+][-][*] Initial Release
