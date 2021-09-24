@@ -1,4 +1,6 @@
 # About
+![SmallTune main window](.images/screeni.png)
+
 SmallTune is a tiny audio player for Windows. It doesn't need much space on disk, is quite fast and has a single symbol in the notification area. Originally, I developed it around 2009. It was one of the first programs I've ever written.
 
 As I was still young and innocent, some parts might be weird and awkward by nowadays standards, but hey... it worked!
