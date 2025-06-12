@@ -64,7 +64,6 @@ var
   hwndPosBar,
   //Toolbar
   hwndToolBar: HWND;
-  hwndSearchPopUpMenu: HMENU;
 
   Display: TDisplay;
 
@@ -1005,13 +1004,13 @@ begin
 
         //Create Trackbar
        hwndPosBar := CreateWindowEx(0, TRACKBAR_CLASS, 'PosBar',
-          WS_CHILD or WS_VISIBLE or TBS_NOTICKS, 4, 96, 240, 20, wnd,
+          WS_CHILD or WS_VISIBLE or TBS_NOTICKS, TrackbarX, TrackbarY, TrackbarWidth, TrackbarHeight, wnd,
           IDT_POSBAR, hInstance, nil);
 
         //Toolbar
         hwndToolBar := CreateWindowEx(0, TOOLBARCLASSNAME, nil, WS_CHILD or
           WS_VISIBLE or CCS_NOPARENTALIGN or CCS_NORESIZE or TBSTYLE_FLAT or TBSTYLE_TOOLTIPS or TBSTYLE_TRANSPARENT,
-          4, 118, 240, 25, wnd, IDC_TOOLBAR, hInstance, nil);
+          ToolbarX, ToolbarY, ToolbarWidth, ToolbarHeight, wnd, IDC_TOOLBAR, hInstance, nil);
 
         // Create tooltip windows
         hToolTip := CreateWindowEx(WS_EX_TOPMOST, TOOLTIPS_CLASS, nil,
@@ -1032,7 +1031,6 @@ begin
             AddToolTip(hwndToolBar,hInstance,PChar(Translator[LNG_TTIP_PLS]),IDC_PLAYLISTBTN);
             AddToolTip(hwndToolBar,hInstance,PChar(Translator[LNG_TTIP_REPE]),IDC_REPEATBTN);
             AddToolTip(hwndToolBar,hInstance,PChar(Translator[LNG_TTIP_SHUF]),IDC_SHUFFLEBTN);
-            AddToolTip(hwndToolBar,hInstance,PChar(Translator[LNG_TTIP_SEARCHARTIST]),IDC_SEARCHWEBBTN);
             AddToolTip(hwndToolBar,hInstance,PChar(Translator[LNG_TTIP_NOHIDE]),IDC_PINNER);
 
             SendMessage(hwndToolBar, TB_SETTOOLTIPS, hToolTip, 0);
@@ -1060,13 +1058,19 @@ begin
         end;
 
         // setup Display
-        Display := TDisplay.Create(wnd, 245, 90);
+        Display := TDisplay.Create(wnd, DisplayWidth, DisplayHeight);
         try
-          Display.SetSpectrumParameter(78, 43, 110, 26, 24);
+          Display.SetSpectrumParameter(SpectrumX, SpectrumY, SpectrumWidth, SpectrumHeight, SpectrumBands);
           Display.LoadImageFromResID(400);
           Display.SongTimeColor := $FFFFFFFF;
           Display.SongInfoColor := $FFD8D8D8;
           Display.SongIndexColor := $F0646464;
+          Display.XSongTitelOffset := XSongTitelOffset;
+          Display.XSongInfoOffset := XSongInfoOffset;
+          Display.XSongIndexOffset := XSongIndexOffset;
+          Display.YSongTitelOffset := YSongTitelOffset;
+          Display.YSongInfoOffset := YSongInfoOffset;
+          Display.YSongIndexOffset := YSongInfoOffset;
           lg.WriteLog('DisplayClass created', 'dgstMain');
         except
           lg.WriteLog('DisplayClass creation failed', 'dgstMain', ltError);
@@ -1370,12 +1374,7 @@ begin
         WM_LBUTTONUP:
           begin
             SetForegroundWindow(wnd);
-           { wpl.length := SIZEOF(WINDOWPLACEMENT);
-            GetWindowPlacement(wnd, @wpl);
-            if ((wpl.showCmd = SW_SHOWNORMAL) or (wpl.showCmd = SW_SHOW)) AND (not PinnWindow) then
-              ShowWindow(wnd, SW_HIDE)
-            else   }
-              ShowWindow(wnd, SW_SHOW);
+            ShowWindow(wnd, SW_SHOW);
           end;
 
         WM_MBUTTONUP:
@@ -1565,7 +1564,7 @@ begin
             try
               Customized := True;
               IDIcon := 1;
-              Display(APPNAME, '© 2009, Daniel Gilbert' + #10#13 + #10#13 + 'Special Thanks to turboPASCAL ' + #10#13 + #10#13 + 'Thanks to HalloDu, Ibccaleb, Michael Puff', 'http://smalltune.net');
+              Display(APPNAME, '© 2009 - 2025, Daniel Gilbert' + #10#13 + #10#13 + 'Special Thanks to turboPASCAL ' + #10#13 + #10#13 + 'Thanks to HalloDu, Ibccaleb, Michael Puff (†)', 'https://smalltune.net');
             finally
               Free;
             end;
@@ -1591,26 +1590,6 @@ begin
         end;
       end;
     end;
-
-    WM_NOTIFY:
-      begin
-        case PNMToolBar(lp)^.hdr.code of
-          TBN_DROPDOWN:
-            begin
-              GetCursorPos(pt);
-              hwndSearchPopUpMenu := CreatePopupMenu;
-
-              AppendMenu(hwndSearchPopUpMenu, MF_STRING, IDM_LOOKATWIKI, PChar('Wikipedia'));
-              AppendMenu(hwndSearchPopUpMenu, MF_STRING, IDM_LOOKATMYSPACE, PChar('MySpace'));
-              AppendMenu(hwndSearchPopUpMenu, MF_SEPARATOR, 0, nil);
-              AppendMenu(hwndSearchPopUpMenu, MF_STRING, IDM_LOOKATGOOGLE, PChar('Google'));
-              TrackPopupMenu(hwndSearchPopUpMenu,TPM_RIGHTALIGN,pt.X,pt.Y,0,wnd,nil);
-
-              DestroyMenu(hwndSearchPopUpMenu);
-              Result := TBDDRET_DEFAULT;
-            end;
-        end;
-      end;
 
     WM_COMMAND:
       begin
@@ -1697,27 +1676,6 @@ begin
                   FALSE: Settings.WriteSetting('main_window_pinned','0');
                 end;
               end;
-
-              IDM_LOOKATAMAZON:
-              begin
-                //ShellExecute(wnd, 'open', PChar(Format('http://www.amazon.de/s/tag=danielgilbert-21&field-keywords=%s', [MediaCL.CurrentMediaItem.Artist])), nil, nil, SW_NORMAL);
-              end;
-
-              IDM_LOOKATWIKI:
-              begin
-                ShellExecute(wnd, 'open', PChar(Format('http://en.wikipedia.org/wiki/%s', [MediaCL.CurrentMediaItem.Artist])), nil, nil, SW_NORMAL);
-              end;
-
-              IDM_LOOKATMYSPACE:
-              begin
-                ShellExecute(wnd, 'open', PChar(Format('http://searchservice.myspace.com/index.cfm?fuseaction=sitesearch.results&qry=%s', [MediaCL.CurrentMediaItem.Artist])), nil, nil, SW_NORMAL);
-              end;
-
-              IDM_LOOKATGOOGLE:
-              begin
-                ShellExecute(wnd, 'open', PChar(Format('http://www.google.de/#q=%s', [MediaCL.CurrentMediaItem.Artist])), nil, nil, SW_NORMAL);
-              end;
-
             end;
         end;
       end
@@ -1727,7 +1685,6 @@ begin
 end;
 
 (* Custom Edit Proc *)
-//function SearchEditWndProc(hEdit, uMsg, wParam, lParam:DWORD): DWORD; stdcall;
 function SearchEditWndProc(hEdit: HWND; uMsg: DWORD; wParam, lParam: integer): DWORD; stdcall;
 begin
   Result := 0;

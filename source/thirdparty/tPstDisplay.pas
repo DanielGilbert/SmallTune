@@ -80,6 +80,14 @@ type
 
     fCurTime,
     fLastTime: Integer;
+
+    fXSongTitelOffset : integer;
+    fYSongTitelOffset : integer;
+    fXSongInfoOffset  : integer;
+    fYSongInfoOffset  : integer;
+    fXSongIndexOffset : integer;
+    fYSongIndexOffset : integer;
+
     procedure Render(Channel: THandle);
     procedure CalcAndDrawSpectrumVis(Channel: THandle);
     procedure ResetScroller;
@@ -126,6 +134,13 @@ type
     property ShowSongInfo: Boolean read FShowSongInfo write FShowSongInfo;
     property ShowSongIndex: Boolean read FShowSongIndex write SetShowSongIndex;
     property ShowTime: Boolean read fShowTime write SetShowTime;
+
+    property XSongTitelOffset : Integer read fXSongTitelOffset write fXSongTitelOffset;
+    property YSongTitelOffset : integer read fYSongTitelOffset write fYSongTitelOffset;
+    property XSongInfoOffset  : integer read fXSongInfoOffset write fXSongInfoOffset;
+    property YSongInfoOffset  : integer read fYSongInfoOffset write fYSongInfoOffset;
+    property XSongIndexOffset : integer read fXSongIndexOffset write fXSongIndexOffset;
+    property YSongIndexOffset : integer read fYSongIndexOffset write fYSongIndexOffset;
   end;
 
   function CreateBitmap32(DC: HDC; W, H: Integer; var BitmapBits: Pointer): HBITMAP;
@@ -136,14 +151,6 @@ implementation
   // nichtauffindbare AccessViolation 216 nur bei INet-Radio ohne SysUtils bei Delphi 6
   uses SysUtils;
 {$ENDIF D6_DEBUG}
-
-var
-  XSongTitelOffset : integer = 75;
-  YSongTitelOffset : integer = 15;
-  XSongInfoOffset  : integer = 75;
-  YSongInfoOffset  : integer = 1;
-  XSongIndexOffset : integer = 182;
-  YSongIndexOffset : integer = 40;
 
 //--- Tools ------------------------------------------------------------------
 
@@ -383,7 +390,7 @@ begin
 
           sdLeft :
             begin
-              Dec(XSongTitelOffset);
+              Dec(fXSongTitelOffset);
               if XSongTitelOffset + tw <= FDisplayWidth then
               begin
                 fScrollDirection := sdRight;
@@ -393,7 +400,7 @@ begin
 
           sdRight :
             begin
-              Inc(XSongTitelOffset);
+              Inc(fXSongTitelOffset);
               if XSongTitelOffset >= 75 then
               begin
                 fScrollDirection := sdLeft;

@@ -468,7 +468,7 @@ const
     TSettings = Array of TSetting;
     
    var
-      tbButtons      : array[0..11]of TTBButton =
+      tbButtons      : array[0..09]of TTBButton =
     (
       //Play/Pause
      (iBitmap:ICN_MEDIA_PLAY;
@@ -543,21 +543,6 @@ const
       dwData:0;
       iString:-1;),
 
-      //Search Web
-     (iBitmap:ICN_MEDIA_SRC;
-      idCommand:IDC_SEARCHWEBBTN;
-      fsState:TBSTATE_ENABLED;
-      fsStyle:BTNS_BUTTON or BTNS_AUTOSIZE or BTNS_DROPDOWN;
-      dwData:0;
-      iString:-1;),
-
-     (iBitmap:0;
-      idCommand:0;
-      fsState:TBSTATE_ENABLED;
-      fsStyle:BTNS_SEP;
-      dwData:0;
-      iString:-1;),
-
       //Pinner
      (iBitmap:ICN_MEDIA_PINN;
       idCommand:IDC_PINNER;
@@ -614,8 +599,37 @@ var
 
       );
 
-    WindowWidth : Integer = 263;
-    WindowHeight : Integer = 160;
+    //WindowWidth : Integer = 263;
+    //WindowHeight : Integer = 160;
+
+    WindowWidth : Integer = 320;
+    WindowHeight : Integer = 240;
+
+    TrackbarX : Integer = 4;
+    TrackbarY : Integer = 176;
+    TrackbarWidth : Integer = 297;
+    TrackbarHeight : Integer = 20;
+
+    ToolbarX : Integer = 4;
+    ToolbarY : Integer = 198;
+    ToolbarWidth : Integer = 297;
+    ToolbarHeight : Integer = 25;
+
+    DisplayWidth : Integer = 298;
+    DisplayHeight : Integer = 120;
+
+    SpectrumX : Integer = 78;
+    SpectrumY : Integer = 73;
+    SpectrumWidth : Integer = 180;
+    SpectrumHeight : Integer = 26;
+    SpectrumBands : Integer = 36;
+
+    XSongTitelOffset : integer = 75;
+    YSongTitelOffset : integer = 15;
+    XSongInfoOffset  : integer = 75;
+    YSongInfoOffset  : integer = 1;
+    XSongIndexOffset : integer = 182;
+    YSongIndexOffset : integer = 40;
 
 implementation
 
