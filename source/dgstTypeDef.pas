@@ -603,33 +603,36 @@ var
     //WindowHeight : Integer = 160;
 
     WindowWidth : Integer = 320;
-    WindowHeight : Integer = 240;
+    WindowHeight : Integer = 190;
 
-    TrackbarX : Integer = 4;
-    TrackbarY : Integer = 176;
-    TrackbarWidth : Integer = 297;
+    TrackbarX : Integer = 2;
+    TrackbarY : Integer = 110;
+    TrackbarWidth : Integer = 310;
     TrackbarHeight : Integer = 20;
 
     ToolbarX : Integer = 4;
-    ToolbarY : Integer = 198;
-    ToolbarWidth : Integer = 297;
+    ToolbarY : Integer = 135;
+    ToolbarWidth : Integer = 305;
     ToolbarHeight : Integer = 25;
 
-    DisplayWidth : Integer = 298;
-    DisplayHeight : Integer = 120;
+    DisplayWidth : Integer = 310;
+    DisplayHeight : Integer = 100;
 
-    SpectrumX : Integer = 78;
-    SpectrumY : Integer = 73;
-    SpectrumWidth : Integer = 180;
-    SpectrumHeight : Integer = 26;
-    SpectrumBands : Integer = 36;
+    SpectrumX : Integer = 60;
+    SpectrumY : Integer = 32;
+    SpectrumWidth : Integer = 238;
+    SpectrumHeight : Integer = 48;
+    SpectrumBands : Integer = 72;
 
-    XSongTitelOffset : integer = 75;
+    XSongTitelOffset : integer = 5;
     YSongTitelOffset : integer = 15;
-    XSongInfoOffset  : integer = 75;
+    XSongInfoOffset  : integer = 4;
     YSongInfoOffset  : integer = 1;
-    XSongIndexOffset : integer = 182;
-    YSongIndexOffset : integer = 40;
+    XSongIndexOffset : integer = 250;
+    YSongIndexOffset : integer = 5;
+
+    XSongPosTimeOffset : integer = 0;
+    YSongPosTimeOffset : integer = 85;
 
 implementation
 

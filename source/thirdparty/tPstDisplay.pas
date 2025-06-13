@@ -88,6 +88,10 @@ type
     fXSongIndexOffset : integer;
     fYSongIndexOffset : integer;
 
+    fXSongPosTimeOffset : integer;
+    fYSongPosTimeOffset : integer;
+
+
     procedure Render(Channel: THandle);
     procedure CalcAndDrawSpectrumVis(Channel: THandle);
     procedure ResetScroller;
@@ -141,6 +145,8 @@ type
     property YSongInfoOffset  : integer read fYSongInfoOffset write fYSongInfoOffset;
     property XSongIndexOffset : integer read fXSongIndexOffset write fXSongIndexOffset;
     property YSongIndexOffset : integer read fYSongIndexOffset write fYSongIndexOffset;
+    property XSongPosTimeOffset : integer read fXSongPosTimeOffset write fXSongPosTimeOffset;
+    property YSongPosTimeOffset : integer read fYSongPosTimeOffset write fYSongPosTimeOffset;
   end;
 
   function CreateBitmap32(DC: HDC; W, H: Integer; var BitmapBits: Pointer): HBITMAP;
@@ -260,9 +266,9 @@ begin
   FScrollDirection := sdLeft;
 
   FSongPosTime := '--:--';
-  FSongTitel   := '< not loaded >';
-  FSongInfo    := '';
-  FSongAlbum    := '';
+  FSongTitel   := 'Being small since 2009.';
+  FSongInfo    := 'SmallTune';
+  FSongAlbum   := '';
   FShowTime := true;
   FShowSongInfo := true;
   FShowSongTitel := true;
@@ -272,7 +278,7 @@ begin
   FSongInfoColor := FSongTimeColor;
   FSongIndexColor := $FF646464;
 
-  FMaxStrWidth := FDisplayWidth - XSongTitelOffset - 3;
+  FMaxStrWidth := FDisplayWidth - XSongTitelOffset;
 
   fShowReflection := true;
 
@@ -301,7 +307,7 @@ begin
     GdipSetStringFormatTrimming(gpStrFormat, StringTrimmingEllipsisCharacter);
     GdipSetStringFormatLineAlign(gpStrFormat, SA_Far);
     GdipCreateFontFamilyFromName('arial', nil, gpFontFamily);
-    GdipCreateFont(gpFontFamily, 11, FS_BOLD, gpUnitPixel, gpFont);
+    GdipCreateFont(gpFontFamily, 12, FS_BOLD, gpUnitPixel, gpFont);
     GdipCreateFont(gpFontFamily, 18, FS_BOLD, gpUnitPixel, gpTimeFont);
   end else
   begin
@@ -401,7 +407,7 @@ begin
           sdRight :
             begin
               Inc(fXSongTitelOffset);
-              if XSongTitelOffset >= 75 then
+              if XSongTitelOffset >= 5 then
               begin
                 fScrollDirection := sdLeft;
                 fCurTime := GetTickCount + 1000;
@@ -446,15 +452,16 @@ begin
     pw := StrToPWChar(FSongPosTime);
 
     GdipSetSolidFillColor(gpFontBrush, FSongTimeColor);
-    rectF := MakeRectF(175, 74, 0, 0);
+    rectF := MakeRectF(fXSongPosTimeOffset, fYSongPosTimeOffset, 0, 0);
     GdipDrawString(gpGraphics, pw, length(FSongPosTime), gpTimeFont, @rectF, gpStrFormat, gpFontBrush);
-    rectF := MakeRectF(174, -64, 0, 0);
+
+    rectF := MakeRectF(fXSongPosTimeOffset-1, -fYSongPosTimeOffset+7, 0, 0);
 
     GdipCreateMatrix(fMatrix);
     GdipSetMatrixElements(fMatrix, 1, 0, 0, -1, 1, 1);
     GdipSetWorldTransform(gpGraphics, fMatrix);
 
-    gpr := MakeRect(174, -64, 85, 26);
+    gpr := MakeRect(fXSongPosTimeOffset-1, -fYSongPosTimeOffset+7, 85, 26);
     GdipCreateLineBrushFromRectI(@gpr,$FF000000, $80808080, LinearGradientModeVertical, WrapModeTile, gpMirrorBrush);
     GdipDrawString(gpGraphics, pw, length(FSongPosTime), gpTimeFont, @rectF, gpStrFormat, gpMirrorBrush);
     GdipResetWorldTransform(gpGraphics);
@@ -495,10 +502,9 @@ begin
   if FShowSongIndex then DrawSongIndex;
   if FShowTime then DrawSongPosTime;
 
-  GdipFillRectangleI(gpGraphics, gpBKBrush, 0, 0, 75, 42);
-
   if gpImage <> nil then
   begin
+    GdipFillRectangleI(gpGraphics, gpBKBrush, 0, 0, 75, 42);
     GdipDrawImageRect(gpGraphics, gpImage, 5, 5, 64, 64);
     if fShowReflection then
     begin
@@ -519,7 +525,7 @@ begin
       GdipFillRectangleI(gpGraphics, gpMirrorBrush, 5, 85, 64, 38);
       if gpMirrorBrush <> nil then GdipDeleteBrush(gpMirrorBrush);
     end;
-  end;   
+  end;  
 
   CalcAndDrawSpectrumVis(Channel);
 
@@ -586,14 +592,14 @@ begin
               inc(I);
             end;
 
-            Y := trunc((sqrt(Sum / log10(sc)) * 1.7 * SPECHEIGHT)); // scale it
+            Y := trunc((sqrt(Sum / log10(sc)) * 1.4 * SPECHEIGHT)); // scale it
 
             if Y > SPECHEIGHT - 2  then Y := SPECHEIGHT - 2; // cap it
 
             bw := SPECWIDTH div SpecBands;
 
             (*Draw Mirror*)
-            GdipSetLineColors( gpBrush, $80808080, $FF000000);
+            GdipSetLineColors( gpBrush, $60808080, $10000000);
             setrect(mr, SpecX + X * bw, SpecY + SPECHEIGHT+1, SpecX + X * bw + bw-1, SpecY + SPECHEIGHT + y + 2);
             GdipFillRectangleI(gpGraphics, gpBrush, mr.Left, mr.Top, mr.Right-mr.Left, mr.Bottom-mr.Top);
 
@@ -647,7 +653,7 @@ end;
 
 procedure TDisplay.ResetScroller;
 begin
-  XSongTitelOffset := 75;
+  XSongTitelOffset := 5;
   fCurTime := 0;
   fScrollDirection := sdLeft;
 end;

@@ -1061,7 +1061,7 @@ begin
         Display := TDisplay.Create(wnd, DisplayWidth, DisplayHeight);
         try
           Display.SetSpectrumParameter(SpectrumX, SpectrumY, SpectrumWidth, SpectrumHeight, SpectrumBands);
-          Display.LoadImageFromResID(400);
+          //Display.LoadImageFromResID(400);
           Display.SongTimeColor := $FFFFFFFF;
           Display.SongInfoColor := $FFD8D8D8;
           Display.SongIndexColor := $F0646464;
@@ -1070,7 +1070,10 @@ begin
           Display.XSongIndexOffset := XSongIndexOffset;
           Display.YSongTitelOffset := YSongTitelOffset;
           Display.YSongInfoOffset := YSongInfoOffset;
-          Display.YSongIndexOffset := YSongInfoOffset;
+          Display.YSongIndexOffset := YSongIndexOffset;
+          Display.XSongPosTimeOffset := XSongPosTimeOffset;
+          Display.YSongPosTimeOffset := YSongPosTimeOffset;
+          Display.ShowReflection := false;
           lg.WriteLog('DisplayClass created', 'dgstMain');
         except
           lg.WriteLog('DisplayClass creation failed', 'dgstMain', ltError);
@@ -1277,21 +1280,21 @@ begin
           case MediaCL.PlayerType of
             ptFileStream:
               begin
-                Display.LoadImageFromResID(400);
+                //Display.LoadImageFromResID(400);
                 Display.ShowTime := True;
                 Display.ShowSongIndex := true;
                 EnableWindow(hwndPosBar, True);
               end;
             ptINetStream:
               begin
-                Display.LoadImageFromResID(401);
+                //Display.LoadImageFromResID(401);
                 Display.ShowTime := False;
                 Display.ShowSongIndex := False;
                 EnableWindow(hwndPosBar, False);
               end;
             ptChipTune:
               begin
-                Display.LoadImageFromResID(402);
+                //Display.LoadImageFromResID(402);
                 Display.ShowTime := True;
                 Display.ShowSongIndex := true;
                 EnableWindow(hwndPosBar, True);
@@ -2834,7 +2837,7 @@ begin
   end;
 
   WndExFlags :=  WS_EX_TOOLWINDOW or WS_EX_LAYERED or WS_EX_ACCEPTFILES;
-  WndFlags   :=  WS_POPUP or WS_THICKFRAME;
+  WndFlags   :=  WS_BORDER or WS_SYSMENU;
 
   // wenn XP läuft dann einfachen Style setzen
   if (OsInfo.dwMajorVersion = 5) then
@@ -2843,7 +2846,7 @@ begin
     WindowWidth := WindowWidth - 12;
 
     WndExFlags :=  WS_EX_TOOLWINDOW or WS_EX_LAYERED or WS_EX_ACCEPTFILES;
-    WndFlags   :=  WS_POPUP or WS_BORDER;
+    WndFlags   :=  WS_BORDER or WS_SYSMENU;
   end;
 
   //Debug
