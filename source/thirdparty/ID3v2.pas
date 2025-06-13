@@ -116,13 +116,16 @@ begin
     { Set read-access and open file }
     AssignFile(SourceFile, FileName);
     FileMode := 0;
-    Reset(SourceFile, 1);
-    { Read header and get file size }
-    BlockRead(SourceFile, Tag, 10, Transferred);
-    Tag.FileSize := FileSize(SourceFile);
-    CloseFile(SourceFile);
-    { if transfer is not complete }
-    if Transferred < 10 then Result := false;
+    try
+      Reset(SourceFile, 1);
+      { Read header and get file size }
+      BlockRead(SourceFile, Tag, 10, Transferred);
+      Tag.FileSize := FileSize(SourceFile);
+      CloseFile(SourceFile);
+      { if transfer is not complete }
+      if Transferred < 10 then Result := false;
+    except
+    end;
   except
     { Error }
     Result := false;

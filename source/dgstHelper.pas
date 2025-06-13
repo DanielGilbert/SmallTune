@@ -549,12 +549,12 @@ begin
 
   FillChar(BI, SizeOf(BrowseInfo), 0);
   bi.hwndOwner := GetActiveWindow;
-  bi.pidlRoot := pidlPrograms;
+  //bi.pidlRoot := pidlPrograms;
   bi.pszDisplayName := lpBuffer;
   bi.lpszTitle := PChar(Caption);
-  bi.ulFlags := BIF_RETURNONLYFSDIRS or BIF_STATUSTEXT;
+  bi.ulFlags := BIF_NEWDIALOGSTYLE;
   bi.lpfn := @BrowseCallbackProc;
-  bi.lParam := Integer(PChar(DefPath));
+  //bi.lParam := Integer(PChar(DefPath));
 
   pidlBrowse := SHBrowseForFolder(bi);
   if (pidlBrowse <> nil) then

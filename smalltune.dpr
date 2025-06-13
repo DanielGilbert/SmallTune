@@ -18,8 +18,8 @@ program smalltune;
 * License for the specific language governing rights and limitations
 * under the License.
 *
-* Version             : 0.3.1
-* Date                : 12-2009
+* Version             : 0.4.0
+* Date                : 06-2025
 * Description         : SmallTune is a simple but powerful audioplayer for
 *                       Windows
 ***************************************************************************}
@@ -52,7 +52,8 @@ uses
   tPstDisplay in 'source\thirdparty\tPstDisplay.pas',
   dgstLog in 'source\dgstLog.pas',
   languagecodes in 'source\thirdparty\languagecodes.pas',
-  dgstSettings in 'source\dgstSettings.pas';
+  dgstSettings in 'source\dgstSettings.pas',
+  Tags in 'source\thirdparty\tags.pas';
 
 begin
 

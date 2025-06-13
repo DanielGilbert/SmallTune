@@ -91,6 +91,8 @@ type
     fXSongPosTimeOffset : integer;
     fYSongPosTimeOffset : integer;
 
+    fXSpectrumOffsetNoTime : integer;
+    fXSpectrumOffsetWithTime : integer;
 
     procedure Render(Channel: THandle);
     procedure CalcAndDrawSpectrumVis(Channel: THandle);
@@ -282,6 +284,9 @@ begin
 
   fShowReflection := true;
 
+  fXSpectrumOffsetNoTime := 5;
+  fXSpectrumOffsetWithTime := 5;
+
   yFactor := 0.34;
   xFactor := -23.8;
 
@@ -356,7 +361,7 @@ begin
   SpecWidth  := Width;
   SpecHeight := Height;
   SpecBands  := Bands;
-
+  fXSpectrumOffsetWithTime := X;
   FSpecWidth := Width;
   FSpecBands := Bands;
 
@@ -665,11 +670,13 @@ begin
     begin
       SpecWidth := FSpecWidth;
       SpecBands := FSpecBands;
+      SpecX := fXSpectrumOffsetWithTime;
     end
   else
     begin
       SpecWidth := FSpecBigWidth;
       SpecBands := FSpecBigBands;
+      SpecX := fXSpectrumOffsetNoTime;
     end;
 end;
 

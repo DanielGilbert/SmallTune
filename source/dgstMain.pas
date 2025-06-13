@@ -1567,7 +1567,7 @@ begin
             try
               Customized := True;
               IDIcon := 1;
-              Display(APPNAME, '© 2009 - 2025, Daniel Gilbert' + #10#13 + #10#13 + 'Special Thanks to turboPASCAL ' + #10#13 + #10#13 + 'Thanks to HalloDu, Ibccaleb, Michael Puff (†)', 'https://smalltune.net');
+              Display(APPNAME, '© 2009 - 2025, Daniel Gilbert' + #10#13 + #10#13 + 'Special Thanks to turboPASCAL ' + #10#13 + #10#13 + 'Thanks to HalloDu, Ibccaleb, Michael Puff (†)', 'http://smalltune.net');
             finally
               Free;
             end;

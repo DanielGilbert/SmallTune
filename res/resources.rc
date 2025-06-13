@@ -97,8 +97,8 @@
 401 RCDATA DISCARDABLE "graphics/oldRadio.png"
 
 IDR_VERSION VERSIONINFO
-FILEVERSION 0,3,1,0
-PRODUCTVERSION 0,3,1,0
+FILEVERSION 0,4,0,0
+PRODUCTVERSION 0,4,0,0
 FILEOS 0x00000004
 FILETYPE 0x00000001
 BEGIN
@@ -106,10 +106,10 @@ BEGIN
   BEGIN
     BLOCK "040904B0"
     BEGIN
-      VALUE "FileVersion", "0.3.1.0\0"
-      VALUE "ProductVersion", "0.3.1.0\0"
+      VALUE "FileVersion", "0.4.0.0\0"
+      VALUE "ProductVersion", "0.4.0.0\0"
       VALUE "CompanyName", "Daniel Gilbert\0"
-      VALUE "FileDescription", "SmallTune - because size does matter\0"
+      VALUE "FileDescription", "SmallTune\0"
       VALUE "InternalName", "smalltune\0"
       VALUE "LegalCopyright", "Daniel Gilbert\0"
       VALUE "OriginalFilename", "smalltune.exe\0"
@@ -129,7 +129,7 @@ FONT 8,"MS Sans Serif",0,0
 STYLE WS_VISIBLE|WS_CAPTION|WS_SYSMENU|DS_CENTER
 BEGIN
   CONTROL "Add URL",IDC_ADDURL_GBX,"Button",WS_CHILD|WS_VISIBLE|BS_GROUPBOX,204,3,228,132
-  CONTROL "Abbruch",IDCANCEL,"Button",WS_CHILD|WS_VISIBLE|WS_TABSTOP,375,207,54,15
+  CONTROL "Cancel",IDCANCEL,"Button",WS_CHILD|WS_VISIBLE|WS_TABSTOP,375,207,54,15
   CONTROL "Ok",IDOK,"Button",WS_CHILD|WS_VISIBLE|WS_TABSTOP,372,117,54,15
   CONTROL "add to database",IDC_RBN1,"Button",WS_CHILD|WS_VISIBLE|WS_TABSTOP|BS_AUTORADIOBUTTON,210,123,102,9
   CONTROL "play only",IDC_RBN2,"Button",WS_CHILD|WS_VISIBLE|WS_TABSTOP|BS_AUTORADIOBUTTON,210,108,102,10
