@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Tags.dll now does the loading of tags, which greatly increases the ability to load tags.
 - Volume can now be controlled in Smalltune.
+- Pressing the "Play"-button will automatically start the first song from the playlist, if no song has been selected before.
 
 ### Changed
 - Enlarged size of player window.
@@ -23,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - Crash when selecting certain files.
 - Fixes issue where Window position wasn't correctly updated.
+
+### Under The Hood
+- Code for Playlist Window got finally isolated.
 
 ## [0.3.1] - 2009-12-07
 ### Added

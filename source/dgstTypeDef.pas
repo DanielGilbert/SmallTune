@@ -162,6 +162,8 @@ const
     WindowHeight2 = 600;
     WindowWidth3 = 350;
     WindowHeight3 = 105;
+    RadioBrowserWindowWidth = 960;
+    RadioBrowserWindowHeight = 540;
 
     WM_TNAMSG     = WM_USER + 10;
     WM_CHANGE_PLAYERTYPE = WM_USER + $0815;

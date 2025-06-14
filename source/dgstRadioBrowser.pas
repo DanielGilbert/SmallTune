@@ -97,7 +97,6 @@ end;
 
 destructor TRadioBrowser.Destroy;
 begin
-  //DestroyWindow(hwndPlaylistWnd);
   UnregisterClass(radiobrowserWndClassName, hInstance);
 end;
 
@@ -114,7 +113,7 @@ begin
   hwndPlaylistWnd  := CreateWindowEx(WS_EX_ACCEPTFILES, radiobrowserWndClassName, RadiobrowserWndName,
                 WS_CAPTION or WS_VISIBLE or WS_SYSMENU
                 or WS_MAXIMIZEBOX or WS_SIZEBOX, 40, 10,
-                300, 200, fMainWindow, 0, hInstance, Self);
+                RadioBrowserWindowWidth, RadioBrowserWindowHeight, fMainWindow, 0, hInstance, Self);
   fIsShowing := true;
 end;
 
@@ -144,9 +143,9 @@ begin
         y := GetSystemMetrics(SM_CYSCREEN);
 
         (* Move Window To New Position *)
-        MoveWindow(Wnd, (x div 2) - (WindowWidth2 div 2),
-          (y div 2) - (WindowHeight2 div 2),
-          WindowWidth2, WindowHeight2, true);
+        MoveWindow(Wnd, (x div 2) - (RadioBrowserWindowWidth div 2),
+          (y div 2) - (RadioBrowserWindowHeight div 2),
+          RadioBrowserWindowWidth, RadioBrowserWindowHeight, true);
 
        // Font
         NCM := GetNonClientMetrics;

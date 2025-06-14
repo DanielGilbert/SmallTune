@@ -1064,9 +1064,18 @@ begin
               IDC_STARTBTN:
               begin
                 if MediaCL.IsPlaying then
+                begin
                   MediaCL.Pause
+                end
                 else
-                  MediaCL.Resume;
+                begin
+                  if MediaCL.CurrentPlayListPos = -1 then
+                  begin
+                    MediaCL.CurrentPlayListPos := 0;
+                    MediaCL.Load(MediaCL.CurrentMediaItem.FilePath, MediaCL.CurrentPlayListPos);
+                  end;
+                  MediaCL.Play;
+                end;
               end;
 
               IDC_STOPBTN:
