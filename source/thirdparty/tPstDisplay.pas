@@ -460,13 +460,13 @@ begin
     rectF := MakeRectF(fXSongPosTimeOffset, fYSongPosTimeOffset, 0, 0);
     GdipDrawString(gpGraphics, pw, length(FSongPosTime), gpTimeFont, @rectF, gpStrFormat, gpFontBrush);
 
-    rectF := MakeRectF(fXSongPosTimeOffset-1, -fYSongPosTimeOffset+7, 0, 0);
+    rectF := MakeRectF(fXSongPosTimeOffset-1, -fYSongPosTimeOffset+11, 0, 0);
 
     GdipCreateMatrix(fMatrix);
     GdipSetMatrixElements(fMatrix, 1, 0, 0, -1, 1, 1);
     GdipSetWorldTransform(gpGraphics, fMatrix);
 
-    gpr := MakeRect(fXSongPosTimeOffset-1, -fYSongPosTimeOffset+7, 85, 26);
+    gpr := MakeRect(fXSongPosTimeOffset-1, -fYSongPosTimeOffset+11, 85, 26);
     GdipCreateLineBrushFromRectI(@gpr,$FF000000, $80808080, LinearGradientModeVertical, WrapModeTile, gpMirrorBrush);
     GdipDrawString(gpGraphics, pw, length(FSongPosTime), gpTimeFont, @rectF, gpStrFormat, gpMirrorBrush);
     GdipResetWorldTransform(gpGraphics);
@@ -481,11 +481,13 @@ procedure TDisplay.DrawSongIndex;
 var
   rectF: TGpRectF;
   pw: PWideChar;
+  tw, th: integer;
 begin
   // SongsAktIdx & SongsMaxCount
   pw := StrToPWChar(format('%3.3d/%3.3d', [FSongsAktIdx, FSongsMaxCount])+ #0);
-
-  rectF := MakeRectF(XSongIndexOffset, YSongIndexOffset, 58, 12);   
+  
+  Gdip_GetStringSize(gpGraphics, gpStrFormat, gpFont, pw, tw, th);
+  rectF := MakeRectF(DisplayWidth - tw - 5, YSongIndexOffset, tw, th);
   GdipSetSolidFillColor(gpFontBrush, FSongIndexColor);
   GdipDrawString(gpGraphics, pw, -1, gpFont, @rectF, gpStrFormat, gpFontBrush);
 

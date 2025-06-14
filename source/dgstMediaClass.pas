@@ -207,6 +207,7 @@ implementation
 constructor TMediaClass.Create;
 begin
   Load_BASSDLL(ExtractFilePath(paramstr(0)) + 'libs\bass.dll');
+  Load_TAGSDLL(ExtractFilePath(paramstr(0)) + 'libs\tags.dll');
   lg.WriteLog('BASS: ' + GetBassErrorName(BASS_ErrorGetCode), 'dgstMediaClass', ltInformation, lmExtended);
   if (HIWORD(BASS_GetVersion) <> BASSVERSION) then
 	begin

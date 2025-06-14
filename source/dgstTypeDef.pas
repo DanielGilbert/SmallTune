@@ -629,7 +629,7 @@ var
     XSongInfoOffset  : integer = 4;
     YSongInfoOffset  : integer = 1;
     XSongIndexOffset : integer = 250;
-    YSongIndexOffset : integer = 5;
+    YSongIndexOffset : integer = 4;
 
     XSongPosTimeOffset : integer = 0;
     YSongPosTimeOffset : integer = 85;
