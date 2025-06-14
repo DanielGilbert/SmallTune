@@ -28,6 +28,7 @@ interface
 
   uses
     Windows,
+    WinInet,
     ShellAPI,
     Messages,
     dgstLog,
@@ -1556,10 +1557,7 @@ begin
             if not fIsShowingSettings then
             begin
               fIsShowingSettings := true;
-              if DialogBox(hInstance, MAKEINTRESOURCE(10000), wnd, @SettingsDlgWndProc) = IDOK then
-              begin
-
-              end;
+              DialogBox(hInstance, MAKEINTRESOURCE(10000), wnd, @SettingsDlgWndProc);
             end;
           end;
     

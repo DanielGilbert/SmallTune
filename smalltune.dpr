@@ -50,7 +50,9 @@ uses
   dgstLog in 'source\dgstLog.pas',
   languagecodes in 'source\thirdparty\languagecodes.pas',
   dgstSettings in 'source\dgstSettings.pas',
-  Tags in 'source\thirdparty\tags.pas';
+  Tags in 'source\thirdparty\tags.pas',
+  dgstRadioBrowser in 'source\dgstRadioBrowser.pas',
+  dgstPlaylistWindow in 'source\dgstPlaylistWindow.pas';
 
 begin
 

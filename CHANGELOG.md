@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Tags.dll now does the loading of tags, which greatly increases the ability to load tags.
+- Volume can now be controlled in Smalltune.
 
 ### Changed
 - Enlarged size of player window.
