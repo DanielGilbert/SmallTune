@@ -23,11 +23,11 @@ type
     hwndFont: HFont;
 
     fMainWindow : HWND;
-    fIsShowingRadioBrowser: boolean;
+    fIsShowing: boolean;
     function GetNonClientMetrics: TNonClientMetrics;
     function InstWndProc(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT; stdcall;
   public
-    property IsShowingRadioBrowser : Boolean read fIsShowingRadioBrowser;
+    property IsShowing : Boolean read fIsShowing;
 
     constructor Create(hMainWindow: HWND; _hInstance: HINST);
     destructor Destroy; override;
@@ -85,7 +85,7 @@ begin
     cbWndExtra    := integer(Self);
     hInstance     := _hInstance;
     lpszMenuName  := nil;
-    lpszClassName := wndClassName2;
+    lpszClassName := radiobrowserWndClassName;
     hIconSm       := LoadIcon(hInstance, MAKEINTRESOURCE(1));
     hIcon         := LoadIcon(hInstance, MAKEINTRESOURCE(1));
     hCursor       := LoadCursor(0, IDC_ARROW);
@@ -98,7 +98,7 @@ end;
 destructor TRadioBrowser.Destroy;
 begin
   //DestroyWindow(hwndPlaylistWnd);
-  UnregisterClass(wndClassName2, hInstance);
+  UnregisterClass(radiobrowserWndClassName, hInstance);
 end;
 
 function TRadioBrowser.GetNonClientMetrics: TNonClientMetrics;
@@ -111,17 +111,17 @@ procedure TRadioBrowser.Show;
 var
   msg_ : MSG;
 begin
-  hwndPlaylistWnd  := CreateWindowEx(WS_EX_ACCEPTFILES, wndClassName2, PlaylistWndName,
+  hwndPlaylistWnd  := CreateWindowEx(WS_EX_ACCEPTFILES, radiobrowserWndClassName, RadiobrowserWndName,
                 WS_CAPTION or WS_VISIBLE or WS_SYSMENU
                 or WS_MAXIMIZEBOX or WS_SIZEBOX, 40, 10,
                 300, 200, fMainWindow, 0, hInstance, Self);
-  fIsShowingRadioBrowser := true;
+  fIsShowing := true;
 end;
 
 procedure TRadioBrowser.Close;
 begin
   ShowWindow(FHandle, 0);       //SW_HIDE
-  fIsShowingRadioBrowser := false;
+  fIsShowing := false;
 end;
 
 (* Playlist Window Function *)
@@ -181,7 +181,7 @@ begin
 
       WM_DESTROY:
       begin
-        fIsShowingRadioBrowser := false;
+        fIsShowing := false;
       end
     else
       Result := DefWindowProc(wnd, uMsg, wp, lp);

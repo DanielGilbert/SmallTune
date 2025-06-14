@@ -45,7 +45,8 @@ interface
     MpuAboutMsgBox,
     dynamic_bass240,
     tPstDisplay,
-    dgstPlaylistWindow;
+    dgstPlaylistWindow,
+    dgstRadiobrowser;
 
   function WinMain(_hInstance: HINST; hPrevInstance: HINST;
     lpCmdLine: PChar; nCmdShow: Integer): Integer; stdcall;
@@ -71,6 +72,7 @@ var
   Display: TDisplay;
 
   PlaylistWindow: TPlaylistWindow;
+  RadiobrowserWindow: TRadiobrowser;
 
   //URL Window
   hwndAddUrlWnd,
@@ -1112,6 +1114,14 @@ begin
                 end;
               end;
 
+              IDC_RADIOBROWSERBTN:
+              begin
+                if not RadiobrowserWindow.IsShowing then
+                begin
+                  RadiobrowserWindow.Show();
+                end;
+              end;
+
               IDC_REPEATBTN:
               begin
                 if SendMessage(hwndToolBar, TB_ISBUTTONCHECKED, IDC_REPEATBTN, 0) <> 0 then
@@ -1915,6 +1925,7 @@ begin
 
   //Create Playlist Window
   PlaylistWindow := TPlaylistWindow.Create(MediaCl, awnd, _hInstance);
+  RadiobrowserWindow := TRadiobrowser.Create(awnd, _hInstance);
 
   if(aWnd = 0) then exit;
   SetForegroundWindow(awnd);

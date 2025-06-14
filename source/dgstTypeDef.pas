@@ -151,10 +151,12 @@ const
     AppName   = 'SmallTune';
 
     PlaylistWndName = 'Playlist';
+    RadiobrowserWndName = 'Radiobrowser';
     URLWndName = 'URL:';
 
     wndClassName    = AppName + 'WndClass';
     wndClassName2   = AppName + 'WndClass2';
+    radiobrowserWndClassName = AppName + 'Radiobrowser';
 
     WindowWidth2 = 490;
     WindowHeight2 = 600;
@@ -239,8 +241,10 @@ const
     IDC_PREVBTN = 50;
     IDC_EJECTBTN = 60;
     IDC_PLAYLISTBTN = 70;
+    IDC_RADIOBROWSERBTN = 71;
     IDC_SETTINGSBTN = 80;
     IDC_OFDBTN = 90;
+
 
     IDC_PATHEDIT = 110;
     IDC_TOOLBAR = 120;
@@ -469,7 +473,7 @@ const
     TSettings = Array of TSetting;
     
    var
-      tbButtons      : array[0..09]of TTBButton =
+      tbButtons      : array[0..10]of TTBButton =
     (
       //Play/Pause
      (iBitmap:ICN_MEDIA_PLAY;
@@ -535,6 +539,14 @@ const
       fsStyle:BTNS_BUTTON or BTNS_AUTOSIZE;
       dwData:0;
       iString:6;),
+
+      //RadioBrowser
+     (iBitmap:ICN_MEDIA_SEAR;
+      idCommand:IDC_RADIOBROWSERBTN;
+      fsState:TBSTATE_ENABLED;
+      fsStyle:BTNS_BUTTON or BTNS_AUTOSIZE;
+      dwData:0;
+      iString:7;),
 
       //Seperator
      (iBitmap:0;
