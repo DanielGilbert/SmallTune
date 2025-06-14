@@ -18,12 +18,12 @@ type
   TPlaylistWindow = class
   private
     //Playlist Window
+    FHandle : HWND;
     hwndPlaylistWnd,
     hwndPlayListLV,
     hwndSearchlbl,
     hwndSearchEdt,
     hwndPLToolBar: HWnd;
-    OldWndProc: Pointer;
     hwndFont: HFont;
     fMediaCl: TMediaClass;
 
@@ -33,14 +33,15 @@ type
     //procedure GetDropFiles(wP: wParam);
     procedure MakeColumns(const hLV: HWND);
     function GetNonClientMetrics: TNonClientMetrics;
-    function WndProcLstView(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT; stdcall;
-    function SearchEditWndProc(hEdit: HWND; uMsg: DWORD; wParam, lParam: integer): DWORD; stdcall;
+    function InstWndProc(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT; stdcall;
+    //function SearchEditWndProc(hEdit: HWND; uMsg: DWORD; wParam, lParam: integer): DWORD; stdcall;
     procedure PLToolBarUsingBitmap(wnd: HWND);
   public
     property IsShowingPlaylist : Boolean read fIsShowingPlaylist;
 
     constructor Create(MediaCl: TMediaClass; hMainWindow: HWND; _hInstance: HINST);
     destructor Destroy; override;
+    procedure Close;
     procedure Update;
     procedure Refresh;
     procedure Show;
@@ -48,6 +49,39 @@ type
   end;
 
 implementation
+
+function GetWindowByHwnd(hwnd: HWnd): TPlaylistWindow;
+begin
+  Result := TPlaylistWindow(GetWindowLong(hwnd, 0));
+end;
+
+procedure StoreWindowByHwnd(hwnd: HWND; AWindow: TPlaylistWindow);
+begin
+  AWindow.FHandle := hwnd;
+  SetWindowLong(hwnd, 0, longint(AWindow));
+end;
+
+function WndProc(hwnd: HWND; uiMsg: UINT; wParam: WPARAM; lParam: LPARAM): LRESULT; stdcall;
+var
+  Msg    : TMessage;
+  Window : TPlaylistWindow;
+begin
+  Msg.Msg    := uiMsg;
+  Msg.WParam := wParam;
+  Msg.LParam := lParam;
+  Msg.Result := 0;
+  if uiMsg = WM_NCCREATE then begin
+    Window := TPlaylistWindow(TWMNCCreate(Msg).CreateStruct.lpCreateParams);
+    StoreWindowByHwnd(hwnd, Window)
+  end;
+  Window := GetWindowByHwnd(hwnd);
+  if Window = nil then begin
+    Result := DefWindowProc(hwnd, Msg.Msg, Msg.WParam, Msg.LParam);
+  end else begin
+    Result := Window.InstWndProc(hwnd, Msg.Msg, Msg.WParam, Msg.LParam);
+  end;
+end;
+
 constructor TPlaylistWindow.Create(MediaCl: TMediaClass; hMainWindow: HWND; _hInstance: HINST);
 var
   wc : TWndClassEx;
@@ -60,9 +94,9 @@ begin
   begin
     cbSize        := SizeOf(TWndClassEx);
     Style         := CS_HREDRAW or CS_VREDRAW;
-    lpfnWndProc   := WndProcLstView;
+    lpfnWndProc   := @WndProc;
     cbClsExtra    := 0;
-    cbWndExtra    := 0;
+    cbWndExtra    := integer(Self);
     hInstance     := _hInstance;
     lpszMenuName  := nil;
     lpszClassName := wndClassName2;
@@ -77,6 +111,7 @@ end;
 
 destructor TPlaylistWindow.Destroy;
 begin
+  //DestroyWindow(hwndPlaylistWnd);
   UnregisterClass(wndClassName2, hInstance);
 end;
 
@@ -107,33 +142,6 @@ begin
   end;
 end;
 
-(* Custom Edit Proc *)
-function TPlaylistWindow.SearchEditWndProc(hEdit: HWND; uMsg: DWORD; wParam, lParam: integer): DWORD; stdcall;
-begin
-  Result := 0;
-
-  case uMsg of
-    WM_CHAR:
-    case Byte(wParam) of
-        VK_RETURN:
-          begin
-            fMediaCl.CurrentPlayListPos := ListView_GetNextItem(hwndPlayListLV,-1,LVNI_SELECTED);
-            if fMediaCl.CurrentPlayListPos <> -1 then
-              if fMediaCl.Load(fMediaCl.CurrentMediaItem.FilePath, fMediaCl.CurrentPlayListPos) then
-              begin
-                fMediaCl.Play;
-                //SetTooltip(stPlay);
-                DestroyWindow(hwndPlaylistWnd);
-              end;
-          end;
-        else
-          CallWindowProc(OldWndProc, hEdit, uMsg, wParam, lParam);
-    end;
-  else
-    Result := CallWindowProc(OldWndProc, hEdit, uMsg, wParam, lParam);
-  end;
-end;
-
 function TPlaylistWindow.GetNonClientMetrics: TNonClientMetrics;
 begin
   Result.cbSize := SizeOf(NONCLIENTMETRICS);
@@ -141,12 +149,20 @@ begin
 end;
 
 procedure TPlaylistWindow.Show;
+var
+  msg_ : MSG;
 begin
-            hwndPlaylistWnd  := CreateWindowEx(WS_EX_ACCEPTFILES, wndClassName2, PlaylistWndName,
+  hwndPlaylistWnd  := CreateWindowEx(WS_EX_ACCEPTFILES, wndClassName2, PlaylistWndName,
                 WS_CAPTION or WS_VISIBLE or WS_SYSMENU
                 or WS_MAXIMIZEBOX or WS_SIZEBOX, 40, 10,
-                300, 200, fMainWindow, 0, hInstance, nil);
-              fIsShowingPlayList := true;
+                300, 200, fMainWindow, 0, hInstance, Self);
+  fIsShowingPlayList := true;
+end;
+
+procedure TPlaylistWindow.Close;
+begin
+  ShowWindow(FHandle, 0);       //SW_HIDE
+  fIsShowingPlayList := false;
 end;
 
 (* Create Columns for Playlist *)
@@ -232,7 +248,7 @@ begin
 end;
  *}
 (* Playlist Window Function *)
-function TPlaylistWindow.WndProcLstView(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT; stdcall;
+function TPlaylistWindow.InstWndProc(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT; stdcall;
 var
   x,y, iStart: Integer;
   rc, tbrc: TRect;
@@ -244,6 +260,21 @@ var
 begin
   Result := 0;
   case uMsg of
+    WM_CHAR:
+    case Byte(wp) of
+        VK_RETURN:
+          begin
+            fMediaCl.CurrentPlayListPos := ListView_GetNextItem(hwndPlayListLV,-1,LVNI_SELECTED);
+            if fMediaCl.CurrentPlayListPos <> -1 then
+              if fMediaCl.Load(fMediaCl.CurrentMediaItem.FilePath, fMediaCl.CurrentPlayListPos) then
+              begin
+                fMediaCl.Play;
+                //SetTooltip(stPlay);
+                //DestroyWindow(hwndPlaylistWnd);
+              end;
+          end;
+    end;
+
     WM_CREATE:
       begin
         (* Center Window *)
@@ -267,7 +298,7 @@ begin
           hInstance,nil);
 
         //Implement own WindowProc for the Edit
-        OldWndProc := Pointer(SetWindowLong(hwndSearchEdt, GWL_WNDPROC, Integer(@TPlaylistWindow.SearchEditWndProc)));
+        //OldWndProc := Pointer(SetWindowLong(hwndSearchEdt, GWL_WNDPROC, Integer(@TPlaylistWindow.SearchEditWndProc)));
 
         hwndSearchlbl := CreateWindowEx(0,'STATIC', PChar(Translator[LNG_FILTER] + ':'),
           WS_VISIBLE or WS_CHILD,8,80,275,16,wnd,0,hInstance,

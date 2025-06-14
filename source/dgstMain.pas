@@ -1344,6 +1344,7 @@ begin
         MediaCL.Free;
         Shell_NotifyIcon(NIM_DELETE,@NID);
         DestroyMenu(hwndPopUpMenu);
+
         PostQuitMessage(0);
       end;
 
