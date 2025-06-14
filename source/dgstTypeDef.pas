@@ -599,9 +599,6 @@ var
 
       );
 
-    //WindowWidth : Integer = 263;
-    //WindowHeight : Integer = 160;
-
     WindowWidth : Integer = 320;
     WindowHeight : Integer = 190;
 

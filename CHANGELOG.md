@@ -5,6 +5,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+### Added
+- Tags.dll now does the loading of tags, which greatly increases the ability to load tags.
+
+### Changed
+- Enlarged size of player window.
+- Massivly Changed layout of display.
+- Re-Added title bar.
+- Playlist Window no longer auto closes after starting a song.
+
+### Removed
+- Ability to search for Artists on Google, Wikipedia and MySpace (Yikes!) got removed.
+- Removed quirky feature to drag the window on the display.
+- Removed hook library.
+
+### Fixed
+- Crash when selecting certain files.
+- Fixes issue where Window position wasn't correctly updated.
 
 ## [0.3.1] - 2009-12-07
 ### Added

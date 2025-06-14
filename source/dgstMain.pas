@@ -84,8 +84,7 @@ var
 
   //Settings Window
   hwndGeneral,
-  hwndAudio,
-  hwndHotkeys: HWND;
+  hwndAudio: HWND;
 
   //All Windows
   MediaCl: TMediaClass;
@@ -126,16 +125,6 @@ var
 
 var
   WM_TASKBARCREATED : Cardinal = 0;
-
-
-// Captain Hook
-type
-  TSetHook = function(ProgHandle, OtherApp : integer): Boolean; stdcall;
-  TRemoveHook = function: Boolean; stdcall;
-
-var
-  SetHook: TSetHook;
-  RemoveHook: TRemoveHook;
   lib: Cardinal;
 
 implementation
@@ -1115,19 +1104,7 @@ begin
         begin
           HotKeyRegistration(wnd);
         end;
-        
-        //Load Hook
-        if Settings.GetSetting('multimedia_keys_activated') = '1' then
-        begin
-          lib := LoadLibrary('plugins\core\st_hook.dll');
-          if lib <> INVALID_HANDLE_VALUE then begin
-            SetHook := GetProcAddress(lib, 'SetHook');
-            RemoveHook := GetProcAddress(lib, 'RemoveHook');
-            lg.WriteLog('st_hook.dll sucessfully loaded', 'dgstMain');
-          end;
-          if Assigned(SetHook) then
-            SetHook(wnd, 0);
-        end;
+      
 
         if Settings.GetSetting('main_window_pinned') = '1' then
         begin
@@ -1250,20 +1227,6 @@ begin
         SetDlgItemText(hwndGeneral, IDC_GENERAL_PLAYFILEDROP_CHK, PChar(Translator[LNG_SETTINGS_PLAYFILEDROP]));
         SetDlgItemText(hwndGeneral, IDC_GENERAL_ADDFILEDROP_CHK, PChar(Translator[LNG_SETTINGS_ADDFILEDROP]));
 
-        SetDlgItemText(hwndHotkeys, IDC_MMKEYS_HKEY_CHK, PChar(Translator[LNG_SETTINGS_MMKEYS]));
-        SetDlgItemText(hwndHotkeys, IDC_HKEYS_HKEYS_CHK, PChar(Translator[LNG_SETTINGS_HOTKEYS]));
-        SetDlgItemText(hwndHotkeys, IDC_SETTINGS_CTRL, PChar(Translator[LNG_SETTINGS_CTRL]));
-        SetDlgItemText(hwndHotkeys, IDC_SETTINGS_ALT, PChar(Translator[LNG_SETTINGS_ALT]));
-        SetDlgItemText(hwndHotkeys, IDC_SETTINGS_SHIFT, PChar(Translator[LNG_SETTINGS_SHIFT]));
-        SetDlgItemText(hwndHotkeys, IDC_HKEYS_GBX, PChar(Translator[LNG_SETTINGS_HOTKEYS_GBX]));
-
-        SetDlgItemText(hwndHotkeys, IDC_PLAYPAUSE_HEKY_STATIC, PChar(Translator[LNG_PLAYPAUSE]));
-        SetDlgItemText(hwndHotkeys, IDC_NEXT_HKEY_STATIC, PChar(Translator[LNG_NEXTTRACK]));
-        SetDlgItemText(hwndHotkeys, IDC_PREV_HKEY_STATIC, PChar(Translator[LNG_PREVTRACK]));
-        SetDlgItemText(hwndHotkeys, IDC_PLAYLIST_HKEY_STATIC, PChar(Translator[LNG_PLAYLIST]));
-        SetDlgItemText(hwndHotkeys, IDC_SHUFFLE_PLAYLIST_STATIC, PChar(Translator[LNG_REPEATPLAYLIST]));
-        SetDlgItemText(hwndHotkeys, IDC_REPEAT_HKEYS_STATIC, PChar(Translator[LNG_SHUFFLE]));
-
         SetDlgItemText(hwndAudio, IDC_BASS_32BIT_CHK, PChar(Translator[LNG_SETTINGS_BASS_FLOAT]));
         SetDlgItemText(hwndAudio, IDC_BASS_MONO_CHK, PChar(Translator[LNG_SETTINGS_BASS_MONO]));
         SetDlgItemText(hwndAudio, IDC_BASS_HWACCEL_CHK, PChar(Translator[LNG_SETTINGS_BASS_NOHW]));
@@ -1350,15 +1313,6 @@ begin
       MouseIsDown := True;
     end;
 
-    WM_MOUSEMOVE:
-    if (MouseIsDown) AND (Settings.GetSetting('main_window_movable') = '1') then
-    begin
-      WindowWasMoved := True;
-      GetCursorPos( ScreenMouse );
-      SetWindowPos( Wnd, HWND_TOP, ScreenMouse.X - InitialFormMousePosition.X,
-      ScreenMouse.Y - InitialFormMousePosition.Y, WindowWidth, WindowHeight, SWP_SHOWWINDOW );
-    end;
-
     WM_LBUTTONUP:
     begin
       MouseIsDown := False;
@@ -1428,11 +1382,10 @@ begin
 
     WM_DESTROY:
       begin
-        if Assigned(RemoveHook) then
-          RemoveHook;
         //Save Settings
         if WindowWasMoved then
         begin
+          GetWindowRect(wnd, WinRect);
           Settings.WriteSetting('main_window_x',IntToStr(WinRect.TopLeft.X));
           Settings.WriteSetting('main_window_y',IntToStr(WinRect.TopLeft.Y));
         end;
@@ -1814,7 +1767,7 @@ begin
                begin
                 MediaCL.Play;
                 SetTooltip(stPlay);
-                DestroyWindow(hwndPlaylistWnd);
+                //DestroyWindow(hwndPlaylistWnd);
                end;
             end;
 
@@ -2159,21 +2112,12 @@ begin
   tvi.hParent := nil;
   tvi.hInsertAfter := TVI_LAST;
   tvi.item.mask := TVIF_TEXT or TVIF_PARAM or TVIF_CHILDREN;
-  tvi.item.cChildren := 1;
+  tvi.item.cChildren := 0;
   tvi.item.lParam := 1;
   tvi.item.cchTextMax := SizeOf(PChar( 'General' + #0));
   tvi.item.pszText := PChar( 'General' + #0);
   //Create Root Item
-  tmptv := HTREEITEM (SendDlgItemMessage(hDlgWnd, ItmID, TVM_INSERTITEM, 0, Longint(@tvi)) );
-  //Initialize Structure for Child
-  tvi.hParent := tmptv;
-  tvi.hInsertAfter := TVI_LAST;
-  tvi.item.mask := TVIF_TEXT or TVIF_PARAM;
-  tvi.item.lParam := 2;
-  tvi.item.cchTextMax := SizeOf(PChar( 'Hotkeys' + #0));
-  tvi.item.pszText := PChar( 'Hotkeys' + #0);
   SendDlgItemMessage(hDlgWnd, ItmID, TVM_INSERTITEM, 0, Longint(@tvi));
-  SendDlgItemMessage(hDlgWnd, ItmID, TVM_EXPAND, TVE_EXPAND, LPARAM(HTREEITEM(tmptv))); 
   //Initialize structure for Root Item
   tvi.hParent := nil;
   tvi.hInsertAfter := TVI_LAST;
@@ -2538,7 +2482,6 @@ begin
         FillSettingsTreeView(hDlgWnd, IDC_TRV_SETTINGS);
         //Load Dialogs
         hwndGeneral := CreateDialog(hInstance, MAKEINTRESOURCE(10100), hDlgWnd, @SettingsTabsDlgWndProc);
-        hwndHotkeys := CreateDialog(hInstance, MAKEINTRESOURCE(10200), hDlgWnd, @SettingsTabsDlgWndProc);
         hwndAudio := CreateDialog(hInstance, MAKEINTRESOURCE(10300), hDlgWnd, @SettingsTabsDlgWndProc);
 
         SendMessage(aWnd, WM_LANGUAGEHASCHANGED, 0, 0);
@@ -2552,16 +2495,12 @@ begin
 
         //Set Initial Dialog Pos
         SetWindowPos(hwndGeneral, 0, 180, 5, 240, 210, SWP_NOSIZE or SWP_NOZORDER or SWP_SHOWWINDOW);
-        SetWindowPos(hwndHotKeys, 0, 180, 5, 240, 210, SWP_NOSIZE or SWP_NOZORDER or SWP_SHOWWINDOW);
         SetWindowPos(hwndAudio, 0, 180, 5, 240, 210, SWP_NOSIZE or SWP_NOZORDER or SWP_SHOWWINDOW);
-        //Hide unneccessary Windows
-        ShowWindow(hwndHotkeys, SW_HIDE);
       end;
 
       WM_COMMAND:
         case wP of
           IDCANCEL: EndDialog(hDlgWnd, IDCANCEL);
-          //IDC_SETTINGS_CLOSE_BTN: EndDialog(hDlgWnd, IDOK);
         end;
 
       WM_NOTIFY:
@@ -2574,21 +2513,18 @@ begin
                 1:
                   begin
                     ShowWindow(hwndGeneral, SW_SHOW);
-                    ShowWindow(hwndHotkeys, SW_HIDE);
                     ShowWindow(hwndAudio, SW_HIDE);
                   end;
 
                 2:
                   begin
                     ShowWindow(hwndGeneral, SW_HIDE);
-                    ShowWindow(hwndHotkeys, SW_SHOW);
                     ShowWindow(hwndAudio, SW_HIDE);
                   end;
 
                 3:
                   begin
                     ShowWindow(hwndGeneral, SW_HIDE);
-                    ShowWindow(hwndHotkeys, SW_HIDE);
                     ShowWindow(hwndAudio, SW_SHOW);
                   end;
 

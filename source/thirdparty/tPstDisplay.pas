@@ -487,7 +487,7 @@ begin
   pw := StrToPWChar(format('%3.3d/%3.3d', [FSongsAktIdx, FSongsMaxCount])+ #0);
   
   Gdip_GetStringSize(gpGraphics, gpStrFormat, gpFont, pw, tw, th);
-  rectF := MakeRectF(DisplayWidth - tw - 5, YSongIndexOffset, tw, th);
+  rectF := MakeRectF(DisplayWidth - tw - 5, YSongIndexOffset, tw + 5, th);
   GdipSetSolidFillColor(gpFontBrush, FSongIndexColor);
   GdipDrawString(gpGraphics, pw, -1, gpFont, @rectF, gpStrFormat, gpFontBrush);
 

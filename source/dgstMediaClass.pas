@@ -39,8 +39,7 @@ uses
   dgstInternetCP,
   SpecialFolders,
   dgstSettings,
-  Tags,
-  MPEGAudio;
+  Tags;
 
 type
   TOnStartPlayingTrack = procedure(Artist, Title, Album: String; Duration: Integer);
@@ -74,7 +73,6 @@ type
     fAutoNext: Boolean;
     fShuffle: Boolean;
     fListRepeat: Boolean;
-    fMPEGAudio: TMPEGaudio;
 
     fDBFileName: String;
 
@@ -270,8 +268,6 @@ begin
   Settings.DB := fDB;
   Settings.LoadSettings;
 
-  fMPEGAudio := TMPEGaudio.Create;
-
   (* Set Global Vars *)
   fDoReadID3Tags := true;
   fCurrentPlayListPos := -1;
@@ -339,7 +335,6 @@ destructor TMediaClass.Destroy;
 begin
   Cleanup;
   fDB.Free;
-  fMPEGAudio.Free;
   fInternetStations.Free;
 end;
 
@@ -551,6 +546,9 @@ begin
   FF.StartSearch;
 end;
 
+var
+  Channel: HStream;
+
 function TMediaClass.Load(filename: string; idx: integer = -1): BOOL;
 var
   Specs: TFileSpecs;
@@ -560,31 +558,14 @@ begin
   begin
     if idx = -1 then
     begin
-      if (GetFileExtension(FileName) = 'mp3') then
-      begin
-        if fMPEGAudio.ReadFromFile(FileName) then
-        if fMPEGAudio.ID3v2.Exists then
-        begin
-          Specs.fTitle := Utf8ToAnsi(fMPEGAudio.ID3v2.Title);
-          Specs.fArtist := Utf8ToAnsi(fMPEGAudio.ID3v2.Artist);
-          Specs.fAlbum := Utf8ToAnsi(fMPEGAudio.ID3v2.Album);
-          Specs.fYear := Utf8ToAnsi(fMPEGAudio.ID3v2.Year);
-          Specs.fGenre := Utf8ToAnsi(fMPEGAudio.ID3v2.Genre);
-        end
-        else if fMPEGAudio.ID3v1.Exists then
-        begin
-          If Specs.fTitle = '' then
-            Specs.fTitle := Utf8ToAnsi(fMPEGAudio.ID3v1.Title);
-          If Specs.fArtist = '' then
-            Specs.fArtist := Utf8ToAnsi(fMPEGAudio.ID3v1.Artist);
-          If Specs.fAlbum = '' then
-            Specs.fAlbum := Utf8ToAnsi(fMPEGAudio.ID3v1.Album);
-          If Specs.fYear = '' then
-            Specs.fYear := Utf8ToAnsi(fMPEGAudio.ID3v1.Year);
-          If Specs.fGenre = '' then
-            Specs.fGenre := Utf8ToAnsi(fMPEGAudio.ID3v1.Genre);
-        end;
-      end;
+          Specs.fFilePath := FileName;
+      Specs.fFileExtType := GetFileExtension(FileName);
+      Channel := Bass_StreamCreateFile(false, PChar(Specs.fFilePath), 0, 0, Bass_Stream_Decode);
+      Specs.fTitle := Utf8ToAnsi(TAGS_Read(Channel, '%TITL'));
+      Specs.fArtist := Utf8ToAnsi(TAGS_Read(Channel, '%ARTI'));
+      Specs.fAlbum := Utf8ToAnsi(TAGS_Read(Channel, '%ALBM'));
+      Specs.fYear := Utf8ToAnsi(TAGS_Read(Channel, '%YEAR'));
+      Specs.fGenre := Utf8ToAnsi(TAGS_Read(Channel, '%GNRE'));
 
     fCurrentMediaItem.Title := Specs.fTitle;
     fCurrentMediaItem.Artist := Specs.fArtist;
@@ -736,8 +717,7 @@ begin
   end;
 end;
 
-var
-  Channel: HStream;
+
 
 (* Files *)
 procedure TMediaClass.AddFileToDatabase(FileName: string);
@@ -748,35 +728,6 @@ begin
   begin
       Specs.fFilePath := FileName;
       Specs.fFileExtType := GetFileExtension(FileName);
-      {*If (Specs.fFileExtType = 'mp3') AND fDoReadID3Tags then
-      begin
-        try
-          fMPEGAudio.ReadFromFile(Specs.fFilePath);
-          Specs.fLength := fMPEGAudio.FileLength;
-          if fMPEGAudio.ID3v2.Exists then
-          begin
-            Specs.fTitle := Utf8ToAnsi(fMPEGAudio.ID3v2.Title);
-            Specs.fArtist := Utf8ToAnsi(fMPEGAudio.ID3v2.Artist);
-            Specs.fAlbum := Utf8ToAnsi(fMPEGAudio.ID3v2.Album);
-            Specs.fYear := Utf8ToAnsi(fMPEGAudio.ID3v2.Year);
-            Specs.fGenre := Utf8ToAnsi(fMPEGAudio.ID3v2.Genre);
-          end
-          else if fMPEGAudio.ID3v1.Exists then
-          begin
-            If Specs.fTitle = '' then
-              Specs.fTitle := Utf8ToAnsi(fMPEGAudio.ID3v1.Title);
-            If Specs.fArtist = '' then
-              Specs.fArtist := Utf8ToAnsi(fMPEGAudio.ID3v1.Artist);
-            If Specs.fAlbum = '' then
-              Specs.fAlbum := Utf8ToAnsi(fMPEGAudio.ID3v1.Album);
-            If Specs.fYear = '' then
-              Specs.fYear := Utf8ToAnsi(fMPEGAudio.ID3v1.Year);
-            If Specs.fGenre = '' then
-              Specs.fGenre := Utf8ToAnsi(fMPEGAudio.ID3v1.Genre);
-          end;
-        except
-        end;
-      end;*}
       Channel := Bass_StreamCreateFile(false, PChar(Specs.fFilePath), 0, 0, Bass_Stream_Decode);
       Specs.fTitle := Utf8ToAnsi(TAGS_Read(Channel, '%TITL'));
       Specs.fArtist := Utf8ToAnsi(TAGS_Read(Channel, '%ARTI'));
