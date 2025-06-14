@@ -62,6 +62,8 @@ var
   hToolTip,
   //Trackbar
   hwndPosBar,
+  //Volumebar
+  hwndVolBar,
   //Toolbar
   hwndToolBar: HWND;
 
@@ -460,6 +462,11 @@ begin
   lvc.pszText := PChar(Translator[LNG_PLAYLISTARTIST]);
   lvc.cx      := 120;
   ListView_InsertColumn(hLV,2,lvc);
+
+  lvc.mask    := LVCF_TEXT or LVCF_WIDTH;
+  lvc.pszText := PChar(Translator[LNG_PLAYLISTALBUM]);
+  lvc.cx      := 120;
+  ListView_InsertColumn(hLV,3,lvc);
 end;
 
 procedure OnNewMeta(Title: String);
@@ -962,7 +969,7 @@ var
   pt: TPoint;
   lng, dir: String;
   PS: PaintStruct;
-  i, n, pos: Integer;
+  i, n, pos, vol: Integer;
 begin
   Result := 0;
 
@@ -994,6 +1001,11 @@ begin
         //Create Trackbar
        hwndPosBar := CreateWindowEx(0, TRACKBAR_CLASS, 'PosBar',
           WS_CHILD or WS_VISIBLE or TBS_NOTICKS, TrackbarX, TrackbarY, TrackbarWidth, TrackbarHeight, wnd,
+          IDT_POSBAR, hInstance, nil);
+
+       //Create Volume bar
+       hwndVolBar := CreateWindowEx(0, TRACKBAR_CLASS, 'VolBar',
+          WS_CHILD or WS_VISIBLE or TBS_NOTICKS, VolumeTrackbarX, VolumeTrackbarY, VolumeTrackbarWidth, VolumeTrackbarHeight, wnd,
           IDT_POSBAR, hInstance, nil);
 
         //Toolbar
@@ -1120,6 +1132,8 @@ begin
               MoveWindow(Wnd, StrToIntDef(Settings.GetSetting('main_window_x') , 0), StrToIntDef(Settings.GetSetting('main_window_y') , 0), WindowWidth, WindowHeight, true);
               WindowWasMoved := True;
             end;
+
+        SendMessage(hwndVolBar, TBM_SETPOS, wParam(true), 100);
 
         //Finally, activate the timer
         SetTimer(Wnd, IDC_TIMER, 50, nil);
@@ -1356,6 +1370,12 @@ begin
               Display.SongPosTime := Format('%3.2d:%2.2d', [pos div 60, abs(pos mod 60)]);
               MediaCL.SetNewPosition(pos);
             end;
+          end;
+          if GetCapture = hwndVolBar then
+          begin
+            vol := SendMessage(hwndVolBar, TBM_GETPOS, 0, 0);
+            //Display.SongPosTime := Format('%3.2d:%2.2d', [pos div 60, abs(pos mod 60)]);
+            MediaCL.SetNewVolume(vol / 100.0);
           end;
         end;
       end;
@@ -1795,6 +1815,7 @@ begin
                       StrPCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Title);
                   end;
                   2: StrPCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Artist);
+                  3: StrPCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Album);
                 end;
               end;
 
@@ -1836,7 +1857,7 @@ begin
                     begin
                       MediaCL.Play;
                       SetTooltip(stPlay);
-                      DestroyWindow(hwndPlaylistWnd);
+                      //DestroyWindow(hwndPlaylistWnd);
                     end;
                 end;
 
@@ -2105,7 +2126,6 @@ end;
 procedure FillSettingsTreeView(hDlgWnd: Hwnd; ItmID: Cardinal);
 var
   tvi: TTVInsertStruct;
-  tmptv: HTREEITEM;
 begin
   SendDlgItemMessage(hDlgWnd, ItmID, TVM_DELETEITEM, 0, LPARAM(HTREEITEM(TVI_ROOT)));
   //Initialize structure for Root Item

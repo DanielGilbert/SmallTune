@@ -87,6 +87,8 @@ type
 
     fDB: TDataBase;
 
+    fCurrentVol: float;
+
     fOnStartPlayingTrack: TOnStartPlayingTrack;
     fOnAddFiles: TOnAddFiles;
     fOnAddFilesDone: TOnAddFilesDone;
@@ -161,7 +163,10 @@ type
     procedure Stop;
     procedure Resume;
 
+    procedure SetNewVolume(Vol: float);
     procedure SetNewPosition(Pos: Integer);
+
+    function GetVolume: float;
 
     function GetStreamDuration: Int64;
     function GetStreamPos(TimeMode: Byte): Integer;
@@ -206,6 +211,7 @@ constructor TMediaClass.Create;
 begin
   Load_BASSDLL(ExtractFilePath(paramstr(0)) + 'libs\bass.dll');
   Load_TAGSDLL(ExtractFilePath(paramstr(0)) + 'libs\tags.dll');
+
   lg.WriteLog('BASS: ' + GetBassErrorName(BASS_ErrorGetCode), 'dgstMediaClass', ltInformation, lmExtended);
   if (HIWORD(BASS_GetVersion) <> BASSVERSION) then
 	begin
@@ -214,6 +220,7 @@ begin
 		Halt;
 	end;
 
+  fCurrentVol := 1.0;
   fFilter := '';
 
   (* Initialize Database and Audio *)
@@ -680,6 +687,8 @@ begin
   BASS_ChannelSetSync(fCurrentStream, BASS_SYNC_END, 0, @TrackEnd, Pointer(Self));
   lg.WriteLog('BASS: ' + GetBassErrorName(BASS_ErrorGetCode), 'dgstMediaClass', ltInformation, lmExtended);
 
+  SetNewVolume(fCurrentVol);
+
   fIsPlaying := true;
 end;
 
@@ -816,6 +825,23 @@ procedure TMediaClass.SetNewPosition(Pos: Integer);
 begin
   if (fCurrentStream <> 0) and (FPlayerType = ptFileStream) then
    BASS_ChannelSetPosition(fCurrentStream, BASS_ChannelSeconds2Bytes(fCurrentStream,Pos), BASS_POS_BYTE);
+end;
+
+procedure TMediaClass.SetNewVolume(vol: float);
+begin
+  if (fCurrentStream <> 0) then
+   BASS_ChannelSetAttribute(fCurrentStream, BASS_ATTRIB_VOL, vol);
+end;
+
+function TMediaClass.GetVolume: float;
+var
+  vol: float;
+begin
+  vol := 1.0;
+  if (fCurrentStream <> 0) then
+   BASS_ChannelGetAttribute(fCurrentStream, BASS_ATTRIB_VOL, vol);
+
+  result := vol;
 end;
 
 procedure TMediaClass.DeleteItemByLVID(ID: Integer);

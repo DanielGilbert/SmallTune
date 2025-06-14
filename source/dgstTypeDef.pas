@@ -132,6 +132,7 @@ interface
     LNG_URLWND_ADD              = 120;
     LNG_URLWND_ADDCAT           = 121;
     LNG_URLWND_DELSEL           = 122;
+    LNG_PLAYLISTALBUM           = 123;
 
 const
   // Hotkeys
@@ -604,8 +605,13 @@ var
 
     TrackbarX : Integer = 2;
     TrackbarY : Integer = 110;
-    TrackbarWidth : Integer = 310;
+    TrackbarWidth : Integer = 220;
     TrackbarHeight : Integer = 20;
+
+    VolumeTrackbarX : Integer = 230;
+    VolumeTrackbarY : Integer = 110;
+    VolumeTrackbarWidth : Integer = 80;
+    VolumeTrackbarHeight : Integer = 20;
 
     ToolbarX : Integer = 4;
     ToolbarY : Integer = 135;
