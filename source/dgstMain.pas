@@ -127,7 +127,6 @@ implementation
 
 function URLInputBoxDlgWndProc(hDlgWnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): BOOL; stdcall; forward;
 function SettingsDlgWndProc(hDlgWnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): BOOL; stdcall; forward;
-procedure HotKeyRegistration(wnd: HWND; DoRegister : Boolean = True); forward;
 
 procedure SetTooltip(State: TstState);
 begin
@@ -482,398 +481,6 @@ begin
     Result := HiWord(lParamHi) and not FAPPCOMMAND_MASK;
 end;
 
-procedure DisableHotkeyFields(hDlgWnd: HWND; Val: Boolean = true);
-begin
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PLAY_CTRL_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PLAY_ALT_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PLAY_SHIFT_CHK), Val);
-
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_NEXT_CTRL_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_NEXT_ALT_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_NEXT_SHIFT_CHK), Val);
-
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PREV_CTRL_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PREV_ALT_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PREV_SHIFT_CHK), Val);
-
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PL_CTRL_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PL_ALT_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_PL_SHIFT_CHK), Val);
-
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_SHUF_CTRL_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_SHUF_ALT_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_SHUF_SHIFT_CHK), Val);
-
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_REP_CTRL_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_REP_ALT_CHK), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_GENERAL_REP_SHIFT_CHK), Val);
-
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_PLAYPAUSE_HEKY_STATIC), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_NEXT_HKEY_STATIC), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_PREV_HKEY_STATIC), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_PLAYLIST_HKEY_STATIC), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_SHUFFLE_PLAYLIST_STATIC), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_REPEAT_HKEYS_STATIC), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_CTRL_HKEY_STATIC), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_ALT_HKEY_STATIC), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_SHIFT_HKEY_STATIC), Val);
-
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_PLAYPAUSE_HKEY_CBX), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_NEXT_HKEY_CBX), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_PREV_HKEY_CBX), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_HKEY_PLAYLIST_CBX), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_HKEY_SHUFFLE_CBX), Val);
-  EnableWindow(GetDlgItem(hDlgWnd, IDC_HKEY_REPEAT_CBX), Val);
-end;
-
-procedure SetVirtualKey(ID: Integer; Key: Integer);
-begin
-
-end;
-
-procedure SetHotkeyControls(hDlgWnd: HWND; ID: Integer);
-var
-  Cmd: TStringDynArray;
-begin
-  cmd := nil;
-  case ID of
-    HOTKEY_PLAY_PAUSE:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('play_hotkey'));
-        if Length(Cmd) > 0 then
-        begin
-          if Cmd[0] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PLAY_CTRL_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[1] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PLAY_ALT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[2] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PLAY_SHIFT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          SendDlgItemMessage(hDlgWnd, IDC_PLAYPAUSE_HKEY_CBX, CB_SETCURSEL, StrToIntDef(Cmd[3], 0), 0);
-        end;
-     end;
-
-    HOTKEY_ADD_FILES:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('playlist_hotkey'));
-        if Length(Cmd) > 0 then
-        begin
-          if Cmd[0] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PL_CTRL_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[1] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PL_ALT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[2] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PL_SHIFT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          SendDlgItemMessage(hDlgWnd, IDC_HKEY_PLAYLIST_CBX, CB_SETCURSEL, StrToIntDef(Cmd[3], 0), 0);
-        end;
-      end;
-
-    HOTKEY_NEXT_TRK:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('next_hotkey'));
-        if Length(Cmd) > 0 then
-        begin
-          if Cmd[0] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_NEXT_CTRL_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[1] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_NEXT_ALT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[2] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_NEXT_SHIFT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          SendDlgItemMessage(hDlgWnd, IDC_NEXT_HKEY_CBX, CB_SETCURSEL, StrToIntDef(Cmd[3], 0), 0);
-        end;
-      end;
-
-    HOTKEY_PREV_TRK:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('prev_hotkey'));
-        if Length(Cmd) > 0 then
-        begin
-          if Cmd[0] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PREV_CTRL_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[1] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PREV_ALT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[2] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PREV_SHIFT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          SendDlgItemMessage(hDlgWnd, IDC_PREV_HKEY_CBX, CB_SETCURSEL, StrToIntDef(Cmd[3], 0), 0);
-        end;
-      end;
-
-    HOTKEY_SHUFFLE:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('shuffle_hotkey'));
-        if Length(Cmd) > 0 then
-        begin
-          if Cmd[0] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_SHUF_CTRL_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[1] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_SHUF_ALT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[2] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_SHUF_SHIFT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          SendDlgItemMessage(hDlgWnd, IDC_HKEY_SHUFFLE_CBX, CB_SETCURSEL, StrToIntDef(Cmd[3], 0), 0);
-        end;
-      end;
-
-    HOTKEY_REPEAT:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('repeat_hotkey'));
-        if Length(Cmd) > 0 then
-        begin
-          if Cmd[0] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_REP_CTRL_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[1] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_REP_ALT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          if Cmd[2] = '1' then
-            SendDlgItemMessage(hDlgWnd, IDC_GENERAL_REP_SHIFT_CHK ,BM_SETCHECK,BST_CHECKED,0);
-          SendDlgItemMessage(hDlgWnd, IDC_HKEY_REPEAT_CBX, CB_SETCURSEL, StrToIntDef(Cmd[3], 0), 0);
-        end;
-      end;
-  end;
-end;
-
-procedure SetControlKeys(hDlgwnd: HWND; ID: Integer);
-var
-  Alt,
-  Ctrl,
-  Shift: Boolean;
-  i: integer;
-begin
-
-  case ID of
-    HOTKEY_PLAY_PAUSE:
-      begin
-        Ctrl := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PLAY_CTRL_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Alt := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PLAY_ALT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Shift :=  (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PLAY_SHIFT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        i := SendDlgItemMessage(hDlgwnd, IDC_PLAYPAUSE_HKEY_CBX, CB_GETCURSEL, 0, 0);
-
-        if(i = CB_ERR) then
-          i := 0;
-
-        Settings.WriteSetting('play_hotkey', BoolToIntStr(Ctrl)+'|'+BoolToIntStr(Alt)+'|'+BoolToIntStr(Shift)+'|'+IntToStr(i) );
-      end;
-
-    HOTKEY_ADD_FILES:
-      begin
-        Ctrl := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PL_CTRL_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Alt := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PL_ALT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Shift :=  (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PL_SHIFT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        i := SendDlgItemMessage(hDlgwnd, IDC_HKEY_PLAYLIST_CBX, CB_GETCURSEL, 0, 0);
-
-        if(i = CB_ERR) then
-          i := 0;
-
-        Settings.WriteSetting('playlist_hotkey', BoolToIntStr(Ctrl)+'|'+BoolToIntStr(Alt)+'|'+BoolToIntStr(Shift)+'|'+IntToStr(i) );
-      end;
-
-    HOTKEY_PREV_TRK:
-      begin
-        Ctrl := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PREV_CTRL_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Alt := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PREV_ALT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Shift :=  (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_PREV_SHIFT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        i := SendDlgItemMessage(hDlgwnd, IDC_PREV_HKEY_CBX, CB_GETCURSEL, 0, 0);
-
-        if(i = CB_ERR) then
-          i := 0;
-
-        Settings.WriteSetting('prev_hotkey', BoolToIntStr(Ctrl)+'|'+BoolToIntStr(Alt)+'|'+BoolToIntStr(Shift)+'|'+IntToStr(i) );
-      end;
-
-    HOTKEY_NEXT_TRK:
-      begin
-        Ctrl := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_NEXT_CTRL_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Alt := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_NEXT_ALT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Shift :=  (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_NEXT_SHIFT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        i := SendDlgItemMessage(hDlgwnd, IDC_NEXT_HKEY_CBX, CB_GETCURSEL, 0, 0);
-
-        if(i = CB_ERR) then
-          i := 0;
-
-        Settings.WriteSetting('next_hotkey', BoolToIntStr(Ctrl)+'|'+BoolToIntStr(Alt)+'|'+BoolToIntStr(Shift)+'|'+IntToStr(i) );
-      end;
-
-    HOTKEY_SHUFFLE:
-      begin
-        Ctrl := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_SHUF_CTRL_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Alt := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_SHUF_ALT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Shift :=  (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_SHUF_SHIFT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        i := SendDlgItemMessage(hDlgwnd, IDC_HKEY_SHUFFLE_CBX, CB_GETCURSEL, 0, 0);
-
-        if(i = CB_ERR) then
-          i := 0;
-
-        Settings.WriteSetting('shuffle_hotkey', BoolToIntStr(Ctrl)+'|'+BoolToIntStr(Alt)+'|'+BoolToIntStr(Shift)+'|'+IntToStr(i) );
-      end;
-
-    HOTKEY_REPEAT:
-      begin
-        Ctrl := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_REP_CTRL_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Alt := (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_REP_ALT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        Shift :=  (SendDlgItemMessage(hDlgWnd, IDC_GENERAL_REP_SHIFT_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-        i := SendDlgItemMessage(hDlgwnd, IDC_HKEY_REPEAT_CBX, CB_GETCURSEL, 0, 0);
-
-        if(i = CB_ERR) then
-          i := 0;
-
-        Settings.WriteSetting('repeat_hotkey', BoolToIntStr(Ctrl)+'|'+BoolToIntStr(Alt)+'|'+BoolToIntStr(Shift)+'|'+IntToStr(i) );
-      end;
-    end;
-    HotKeyRegistration(awnd, False);
-    HotKeyRegistration(awnd);
-end;
-
-function GetVirtualKey(ID: Integer): Cardinal;
-var
-  Cmd: TStringDynArray;
-  vk: Cardinal;
-  iCmd: Integer;
-begin
-  vk := 0;
-  Result := 0;
-  cmd := nil;
-
-  case ID of
-
-    HOTKEY_PLAY_PAUSE:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('play_hotkey'));
-      end;
-
-    HOTKEY_ADD_FILES:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('playlist_hotkey'));
-      end;
-
-    HOTKEY_NEXT_TRK:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('next_hotkey'));
-      end;
-
-    HOTKEY_PREV_TRK:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('prev_hotkey'));
-      end;
-
-    HOTKEY_SHUFFLE:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('shuffle_hotkey'));
-      end;
-
-    HOTKEY_REPEAT:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('repeat_hotkey'));
-      end;
-
-  end;
-
-  if Length(Cmd) > 0 then
-  begin
-    iCmd := StrToIntDef(cmd[3],-1);
-    case iCmd of
-      -1: Exit;
-      00..25: vk := iCmd + 65;
-      26..29: vk := iCmd + 11;
-          30: vk := VK_SPACE;
-          31: vk := VK_HOME;
-          32: vk := VK_END;
-          33: vk := VK_PRIOR;
-          34: vk := VK_NEXT;
-      35..44: vk := iCmd + 13;
-      45..54: vk := iCmd + 67;
-      55..67: vk := iCmd + 68;
-    end;
-    Result := vk;
-  end;
-
-end;
-
-function MakeControlKeys(ID: Integer): Cardinal;
-var
-  Cmd: TStringDynArray;
-begin
-  Result := 0;
-  cmd := nil;
-
-  case ID of
-
-    HOTKEY_PLAY_PAUSE:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('play_hotkey'));
-      end;
-
-    HOTKEY_ADD_FILES:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('playlist_hotkey'));
-      end;
-
-    HOTKEY_NEXT_TRK:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('next_hotkey'));
-      end;
-
-    HOTKEY_PREV_TRK:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('prev_hotkey'));
-      end;
-
-    HOTKEY_SHUFFLE:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('shuffle_hotkey'));
-      end;
-
-    HOTKEY_REPEAT:
-      begin
-        Cmd := Explode('|', Settings.GetSetting('repeat_hotkey'));
-      end;
-
-  end;
-
-  if Length(Cmd) > 0 then
-  begin
-    if cmd[0] = '1' then
-      Result := Result or MOD_CONTROL;
-
-    if cmd[1] = '1' then
-      Result := Result or MOD_ALT;
-
-    if cmd[2] = '1' then
-      Result := Result or MOD_SHIFT;
-  end;
-
-end;
-
-
-procedure HotKeyRegistration(wnd: HWND; DoRegister : Boolean = True);
-begin
-  if DoRegister then
-  begin
-    if not RegisterHotKey(wnd, HOTKEY_PLAY_PAUSE, MakeControlKeys(HOTKEY_PLAY_PAUSE), GetVirtualKey(HOTKEY_PLAY_PAUSE)) then
-      lg.WriteLog('Hotkey [Play/Pause] couldn''t be registered', 'dgstMain', ltError);
-
-    if not RegisterHotKey(wnd, HOTKEY_ADD_FILES, MakeControlKeys(HOTKEY_ADD_FILES), GetVirtualKey(HOTKEY_ADD_FILES)) then
-      lg.WriteLog('Hotkey [Playlist] couldn''t be registered', 'dgstMain', ltError);
-
-    if not RegisterHotKey(wnd, HOTKEY_NEXT_TRK, MakeControlKeys(HOTKEY_NEXT_TRK), GetVirtualKey(HOTKEY_NEXT_TRK)) then
-      lg.WriteLog('Hotkey [Next] couldn''t be registered', 'dgstMain', ltError);
-
-    if not RegisterHotKey(wnd, HOTKEY_PREV_TRK, MakeControlKeys(HOTKEY_PREV_TRK), GetVirtualKey(HOTKEY_PREV_TRK)) then
-      lg.WriteLog('Hotkey [Prev] couldn''t be registered', 'dgstMain', ltError);
-
-    if not RegisterHotKey(wnd, HOTKEY_SHUFFLE, MakeControlKeys(HOTKEY_SHUFFLE), GetVirtualKey(HOTKEY_SHUFFLE)) then
-      lg.WriteLog('Hotkey [Shuffle] couldn''t be registered', 'dgstMain', ltError);
-
-    if not RegisterHotKey(wnd, HOTKEY_REPEAT, MakeControlKeys(HOTKEY_REPEAT), GetVirtualKey(HOTKEY_REPEAT)) then
-      lg.WriteLog('Hotkey [Repeat] couldn''t be registered', 'dgstMain', ltError);
-
-  end
-  else
-  begin
-    UnregisterHotKey(wnd, HOTKEY_PLAY_PAUSE);
-    UnregisterHotKey(wnd, HOTKEY_ADD_FILES);
-    UnregisterHotKey(wnd, HOTKEY_NEXT_TRK);
-    UnregisterHotKey(wnd, HOTKEY_PREV_TRK);
-    UnregisterHotKey(wnd, HOTKEY_REPEAT);
-    UnregisterHotKey(wnd, HOTKEY_SHUFFLE);
-  end;
-end;
 
 procedure  ModifyThePopUpMenu(hwndPopUpMenu: HMENU);
 begin
@@ -1039,13 +646,6 @@ begin
         AppendMenu(hwndPopUpMenu, MF_SEPARATOR, 0, nil);
         AppendMenu(hwndPopUpMenu, MF_STRING, IDM_CLOSEBTN, PChar(Translator[LNG_EXIT]));
 
-        //Hotkey
-        if Settings.GetSetting('hotkeys_activated') = '1' then
-        begin
-          HotKeyRegistration(wnd);
-        end;
-      
-
         if Settings.GetSetting('main_window_pinned') = '1' then
         begin
           PinnWindow := True;
@@ -1077,43 +677,6 @@ begin
     begin
       //GetDropFiles(wP);
     end;
-
-   WM_HOTKEY:
-     case wP of
-       HOTKEY_PLAY_PAUSE:
-        begin
-          lg.WriteLog('Hotkey received: [Play/Pause]', 'dgstMain');
-          PostMessage(wnd, WM_COMMAND, MAKEWPARAM(IDC_STARTBTN, BN_CLICKED), 0);
-        end;
-       HOTKEY_ADD_FILES :
-        begin
-          lg.WriteLog('Hotkey received: [Playlist]', 'dgstMain');
-          PostMessage(wnd, WM_COMMAND, MAKEWPARAM(IDC_PLAYLISTBTN, BN_CLICKED), 0);
-        end;
-       HOTKEY_NEXT_TRK  :
-        begin
-          lg.WriteLog('Hotkey received: [Next]', 'dgstMain');
-          PostMessage(wnd, WM_COMMAND, MAKEWPARAM(IDC_NEXTBTN, BN_CLICKED), 0);
-        end;
-       HOTKEY_PREV_TRK  :
-        begin
-          lg.WriteLog('Hotkey received: [Prev]', 'dgstMain');
-          PostMessage(wnd, WM_COMMAND, MAKEWPARAM(IDC_PREVBTN, BN_CLICKED), 0);
-        end;
-        HOTKEY_SHUFFLE :
-        begin
-          lg.WriteLog('Hotkey received: [Suffle]', 'dgstMain');
-          PostMessage(wnd, WM_COMMAND, MAKEWPARAM(IDC_SHUFFLEBTN, BN_CLICKED), 0);
-
-        end;
-        HOTKEY_REPEAT :
-        begin
-          lg.WriteLog('Hotkey received: [Repeat]', 'dgstMain');
-          PostMessage(wnd, WM_COMMAND, MAKEWPARAM(IDC_REPEATBTN, BN_CLICKED), 0);
-
-        end;
-
-     end;
 
    WM_ACTIVATEAPP:
       if not Boolean(wP) then
@@ -1801,11 +1364,6 @@ begin
         if Settings.GetSetting('save_main_window_pos') = '1' then
           SendDlgItemMessage(hDlgWnd, IDC_GENERAL_SAVEWINDOWPOS_CHK ,BM_SETCHECK,BST_CHECKED,0);
 
-        if Settings.GetSetting('hotkeys_activated') = '1' then
-          SendDlgItemMessage(hDlgWnd, IDC_HKEYS_HKEYS_CHK ,BM_SETCHECK,BST_CHECKED,0)
-        else
-          DisableHotkeyFields(hDlgWnd, False);
-
         if Settings.GetSetting('multimedia_keys_activated') = '1' then
           SendDlgItemMessage(hDlgWnd, IDC_MMKEYS_HKEY_CHK ,BM_SETCHECK,BST_CHECKED,0);
 
@@ -1827,14 +1385,6 @@ begin
         if Settings.GetSetting('no_hardware') <> '0' then
           SendDlgItemMessage(hDlgWnd, IDC_BASS_HWACCEL_CHK ,BM_SETCHECK,BST_CHECKED,0);
 
-        //Hotkeys
-        SetHotkeyControls(hDlgWnd, HOTKEY_PLAY_PAUSE);
-        SetHotkeyControls(hDlgWnd, HOTKEY_ADD_FILES);
-        SetHotkeyControls(hDlgWnd, HOTKEY_NEXT_TRK);
-        SetHotkeyControls(hDlgWnd, HOTKEY_PREV_TRK);
-        SetHotkeyControls(hDlgWnd, HOTKEY_SHUFFLE);
-        SetHotkeyControls(hDlgWnd, HOTKEY_REPEAT);
-
       end;
 
     WM_DESTROY:
@@ -1846,36 +1396,6 @@ begin
 
         CBN_SELCHANGE:
           case LoWord(wP) of
-
-            IDC_PLAYPAUSE_HKEY_CBX:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_PLAY_PAUSE);
-              end;
-
-            IDC_NEXT_HKEY_CBX:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_NEXT_TRK);
-              end;
-
-            IDC_PREV_HKEY_CBX:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_PREV_TRK);
-              end;
-
-            IDC_HKEY_PLAYLIST_CBX:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_ADD_FILES);
-              end;
-
-            IDC_HKEY_SHUFFLE_CBX:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_SHUFFLE);
-              end;
-
-            IDC_HKEY_REPEAT_CBX:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_REPEAT);
-              end;
 
             IDC_LANG_CBX:
               begin
@@ -1915,25 +1435,6 @@ begin
                 case CBChecked of
                   True: Settings.WriteSetting('save_main_window_pos','1');
                   False: Settings.WriteSetting('save_main_window_pos','0');
-                end;
-              end;
-
-            IDC_HKEYS_HKEYS_CHK:
-              begin
-                CBChecked := (SendDlgItemMessage(hDlgWnd, IDC_HKEYS_HKEYS_CHK ,BM_GETCHECK,0,0) = BST_CHECKED);
-                case CBChecked of
-                  True:
-                    begin
-                      Settings.WriteSetting('hotkeys_activated','1');
-                      HotKeyRegistration(aWnd);
-                      DisableHotkeyFields(hDlgWnd);
-                    end;
-                  False:
-                    begin
-                      Settings.WriteSetting('hotkeys_activated','0');
-                      HotKeyRegistration(aWnd, false);
-                      DisableHotkeyFields(hDlgWnd,False);
-                    end;
                 end;
               end;
 
@@ -2041,36 +1542,6 @@ begin
                       Settings.WriteSetting('no_hardware', '0');
                     end;
                 end;
-              end;
-
-            IDC_GENERAL_PLAY_CTRL_CHK, IDC_GENERAL_PLAY_ALT_CHK, IDC_GENERAL_PLAY_SHIFT_CHK:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_PLAY_PAUSE);
-              end;
-
-            IDC_GENERAL_NEXT_CTRL_CHK, IDC_GENERAL_NEXT_ALT_CHK, IDC_GENERAL_NEXT_SHIFT_CHK:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_NEXT_TRK);
-              end;
-
-            IDC_GENERAL_PREV_CTRL_CHK, IDC_GENERAL_PREV_ALT_CHK, IDC_GENERAL_PREV_SHIFT_CHK:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_PREV_TRK);
-              end;
-
-            IDC_GENERAL_PL_CTRL_CHK, IDC_GENERAL_PL_ALT_CHK, IDC_GENERAL_PL_SHIFT_CHK:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_ADD_FILES);
-              end;
-
-            IDC_GENERAL_SHUF_CTRL_CHK, IDC_GENERAL_SHUF_ALT_CHK, IDC_GENERAL_SHUF_SHIFT_CHK:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_SHUFFLE);
-              end;
-
-            IDC_GENERAL_REP_CTRL_CHK, IDC_GENERAL_REP_ALT_CHK, IDC_GENERAL_REP_SHIFT_CHK:
-              begin
-                SetControlKeys(hDlgWnd, HOTKEY_REPEAT);
               end;
           end;
         end;
