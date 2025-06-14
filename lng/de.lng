@@ -5,7 +5,7 @@
 
 // Must match Application Minor Version
 // e.g. "0.3" will work for SmallTune 0.3.0, SmallTune 0.3.1, SmallTune 0.3.2 and so on, but not SmallTune 0.4.0...
-TRANS_FILE_VERSION=0.3;
+TRANS_FILE_VERSION=0.4;
 
 //Short Description:
 //
@@ -90,7 +90,7 @@ TRANS_FILE_VERSION=0.3;
 //Please wait...
 32:'Bitte warten...';
 //Would you like to use SmallTune on an USB-Stick, SD-Card or similiar ?\n\n (Otherwise, the database will be saved in the current User''s application folder [recommended for Vista & 7])
-33:'Möchten Sie SmallTune auf einem USB-Stick, einer SD-Karte oder ähnlichem nutzen ?\n\n (Ansonsten wird die Datenbank im Anwendungsverzeichnis des aktuellen Nutzers gespeichert [empfohlen für Vista & 7])';
+33:'Möchten Sie SmallTune auf einem USB-Stick, einer SD-Karte oder Ähnlichem nutzen ?\n\n (Ansonsten wird die Datenbank im Anwendungsverzeichnis des aktuellen Nutzers gespeichert [empfohlen für Vista & 7])';
 //Where to save?
 34:'Wo soll gespeichert werden?';
 //supported files (*.mp3,*.mp2,*.wma,*.flac,*.ogg)|*.mp3;*.mp2;*.wma;*.flac;*.ogg|MP3 (*.mp3)|*.mp3|WMA (*.wma)|*.wma|FLAC (*.flac)|*.flac|OGG (*.ogg)|*.ogg
@@ -269,3 +269,5 @@ TRANS_FILE_VERSION=0.3;
 121:'Kategorie';
 //delete selected
 122:'Ausgewählte löschen';
+//playlist Album
+123: 'Album';

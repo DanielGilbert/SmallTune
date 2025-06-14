@@ -5,7 +5,7 @@
 
 // Must match Application Minor Version
 // e.g. "0.3" will work for SmallTune 0.3.0, SmallTune 0.3.1, SmallTune 0.3.2 and so on, but not SmallTune 0.4.0...
-TRANS_FILE_VERSION=0.3;
+TRANS_FILE_VERSION=0.4;
 
 //Short Description:
 //
@@ -269,3 +269,5 @@ TRANS_FILE_VERSION=0.3;
 121:'Category';
 //delete selected
 122:'Delete selected';
+//Playlist Album
+123:'Album';
