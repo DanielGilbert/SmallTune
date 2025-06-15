@@ -47,7 +47,8 @@ interface
     tPstDisplay,
     dgstPlaylistWindow,
     dgstRadiobrowser,
-    dgstRadiobrowserApi;
+    dgstRadiobrowserApi,
+    dgstRestClient;
 
   function WinMain(_hInstance: HINST; hPrevInstance: HINST;
     lpCmdLine: PChar; nCmdShow: Integer): Integer; stdcall;
@@ -75,6 +76,7 @@ var
   PlaylistWindow: TPlaylistWindow;
   RadiobrowserWindow: TRadiobrowser;
   RadiobrowserApi: TRadiobrowserApi;
+  RestClient: TRestClient;
 
   //URL Window
   hwndAddUrlWnd,
@@ -1936,7 +1938,8 @@ begin
 
   //Create Playlist Window
   PlaylistWindow := TPlaylistWindow.Create(MediaCl, awnd, _hInstance);
-  RadiobrowserApi := TRadiobrowserApi.Create;
+  RestClient := TRestClient.Create;
+  RadiobrowserApi := TRadiobrowserApi.Create(RestClient);
   RadiobrowserWindow := TRadiobrowser.Create(awnd, _hInstance, RadiobrowserApi);
 
   if(aWnd = 0) then exit;

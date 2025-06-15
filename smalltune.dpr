@@ -54,7 +54,8 @@ uses
   dgstRadioBrowser in 'source\dgstRadioBrowser.pas',
   dgstPlaylistWindow in 'source\dgstPlaylistWindow.pas',
   dgstRadioBrowserApi in 'source\dgstRadioBrowserApi.pas',
-  dgstWinDns in 'source\dgstWinDns.pas';
+  dgstWinDns in 'source\dgstWinDns.pas',
+  dgstRestClient in 'source\dgstRestClient.pas';
 
 begin
 
