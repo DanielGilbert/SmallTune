@@ -87,18 +87,45 @@ end;
 function TRadioBrowserApi.FetchAllCountries;
 var
   CountryCodes: TCountryCodes;
-  I: integer;
+  M, I, N: integer;
   host: string;
   urlContent: string;
+  intermediateContent : string;
+  skipIndicator: boolean;
 begin
   host := FetchRandomHost();
+  intermediateContent := '';
   urlContent := fRestClient.GetUrlContent('http://' + host + '/csv/countries');
-  SetLength(CountryCodes, 3);
-  for I := 0 to Length(CountryCodes) - 1 do
+  n := 0;
+  skipIndicator := true;
+  for M := 0 to Length(urlContent) - 1 do
   begin
-    CountryCodes[I] := 'Test' + IntToStr(I);
+    case urlContent[M] of
+    #0:
+      begin
+        continue;
+      end;
+    #10,
+    #13:
+      begin
+        intermediateContent := '';
+        skipIndicator := false;
+      end;
+    ',':
+      begin
+        if skipIndicator <> true then
+        begin
+        SetLength(CountryCodes, Length(CountryCodes) + 1);
+        CountryCodes[N] := intermediateContent;
+        intermediateContent := '';
+        Inc(N);
+        skipIndicator := true;
+        end;
+      end;
+    else
+      intermediateContent := intermediateContent + urlContent[M];
+    end;
   end;
-  CountryCodes[2] := urlContent;
   Result := CountryCodes;
 end;
 

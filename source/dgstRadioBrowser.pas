@@ -145,7 +145,7 @@ begin
 
         //Toolbar
         hwndComboBox := CreateWindowEx(0, COMBOBOXCLASSNAME, nil, WS_CHILD or
-          WS_VISIBLE or CBS_DROPDOWNLIST or CBS_HASSTRINGS,
+          WS_VISIBLE or CBS_DROPDOWNLIST or CBS_HASSTRINGS or WS_VSCROLL,
           XCountriesComboboxOffset, YCountriesComboboxOffset, CountriesComboboxWidth, CountriesComboboxHeight, wnd, IDC_COUNTRIES_CBX, hInstance, nil);
 
         countries := fRadioBrowserApi.FetchAllCountries;
