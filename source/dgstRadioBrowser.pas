@@ -12,15 +12,16 @@ uses
   tPnvOpenFileDlg,
   dgstSysUtils,
   dgstTranslator,
-  dgstHelper;
+  dgstHelper,
+  dgstRadioBrowserApi;
 
 type
   TRadioBrowser = class
   private
-    //Playlist Window
+    hwndComboBox,
     FHandle : HWND;
-    hwndPlaylistWnd: HWND;
     hwndFont: HFont;
+    fRadioBrowserApi: TRadioBrowserApi;
 
     fMainWindow : HWND;
     fIsShowing: boolean;
@@ -29,7 +30,7 @@ type
   public
     property IsShowing : Boolean read fIsShowing;
 
-    constructor Create(hMainWindow: HWND; _hInstance: HINST);
+    constructor Create(hMainWindow: HWND; _hInstance: HINST; RadioBrowserApi: TRadiobrowserApi);
     destructor Destroy; override;
     procedure Close;
     procedure Show;
@@ -69,12 +70,12 @@ begin
   end;
 end;
 
-constructor TRadioBrowser.Create(hMainWindow: HWND; _hInstance: HINST);
+constructor TRadioBrowser.Create(hMainWindow: HWND; _hInstance: HINST; RadioBrowserApi: TRadiobrowserApi);
 var
   wc : TWndClassEx;
 begin
   fMainWindow := hMainWindow;
-
+  fRadioBrowserApi := RadioBrowserApi;
   ZeroMemory(@wc, sizeof(TWndClassEx));
   With wc do
   begin
@@ -107,10 +108,8 @@ begin
 end;
 
 procedure TRadioBrowser.Show;
-var
-  msg_ : MSG;
 begin
-  hwndPlaylistWnd  := CreateWindowEx(WS_EX_ACCEPTFILES, radiobrowserWndClassName, RadiobrowserWndName,
+  CreateWindowEx(WS_EX_ACCEPTFILES, radiobrowserWndClassName, RadiobrowserWndName,
                 WS_CAPTION or WS_VISIBLE or WS_SYSMENU
                 or WS_MAXIMIZEBOX or WS_SIZEBOX, 40, 10,
                 RadioBrowserWindowWidth, RadioBrowserWindowHeight, fMainWindow, 0, hInstance, Self);
@@ -126,13 +125,10 @@ end;
 (* Playlist Window Function *)
 function TRadioBrowser.InstWndProc(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT; stdcall;
 var
-  x,y, iStart: Integer;
-  rc, tbrc: TRect;
+  x,y: Integer;
   NCM: TNonClientMetrics;
-  MediaFle: TLVItemCache;
-  Filterbuf: Array[0..255] of Char;
   i: integer;
-  dir: String;
+  countries: TCountryCodes;
 begin
   Result := 0;
   case uMsg of
@@ -147,15 +143,44 @@ begin
           (y div 2) - (RadioBrowserWindowHeight div 2),
           RadioBrowserWindowWidth, RadioBrowserWindowHeight, true);
 
+        //Toolbar
+        hwndComboBox := CreateWindowEx(0, COMBOBOXCLASSNAME, nil, WS_CHILD or
+          WS_VISIBLE or CBS_DROPDOWNLIST or CBS_HASSTRINGS,
+          XCountriesComboboxOffset, YCountriesComboboxOffset, CountriesComboboxWidth, CountriesComboboxHeight, wnd, IDC_COUNTRIES_CBX, hInstance, nil);
+
+        countries := fRadioBrowserApi.FetchAllCountries;
+
+        for i := 0 to Length(countries) - 1 do
+          SendMessage(hwndComboBox, CB_ADDSTRING, 0, INTEGER(PCHAR(String(countries[I]))));
+
+        SendMessage(hwndComboBox, CB_SETCURSEL, 0, 0);
+
        // Font
         NCM := GetNonClientMetrics;
         hwndFont := CreateFontIndirect(NCM.lfStatusFont);
         if(hwndFont <> 0) then
         begin
-          //SendMessage(hwndSearchEdt, WM_SETFONT, WPARAM(hwndFont), LPARAM(true));
-          //SendMessage(hwndSearchlbl, WM_SETFONT, WPARAM(hwndFont), LPARAM(true));
-          //SendMessage(hwndPLToolBar, WM_SETFONT, WPARAM(hwndFont), LPARAM(true));
+          SendMessage(hwndComboBox, WM_SETFONT, WPARAM(hwndFont), LPARAM(true));
        end;
+      end;
+
+    WM_COMMAND:
+      begin
+        case hiword(wP) of
+
+        CBN_SELCHANGE:
+          case LoWord(wP) of
+
+            IDC_LANG_CBX:
+              begin
+                if SendDlgItemMessage(Wnd, IDC_RADIOBROWSER_COUNTRY_CBX, CB_GETCURSEL, 0, 0) <> CB_ERR  then
+                begin
+                  //Translator.CurrentLanguage := Translator.AvailableLanguages.fLng[SendDlgItemMessage(hDlgWnd, IDC_LANG_CBX, CB_GETCURSEL, 0, 0)].ISO_Code
+                end;
+              end;
+
+           end;
+        end;
       end;
 
     WM_SHOWWINDOW:

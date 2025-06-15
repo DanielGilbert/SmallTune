@@ -406,6 +406,12 @@ function ImageList_Merge(ImageList1: HIMAGELIST; Index1: Integer;
 {$EXTERNALSYM ImageList_Duplicate}
 function ImageList_Duplicate(himl: HIMAGELIST): HIMAGELIST; stdcall;
 
+{ ====== COMBOBOX CONTROL ================ }
+
+const
+  {$EXTERNALSYM COMBOBOXCLASSNAME}
+  COMBOBOXCLASSNAME = 'ComboBox';
+
 
 { ====== TOOLBAR CONTROL =================== }
 

@@ -265,6 +265,8 @@ const
 
     ICN_TNA = 200;
 
+
+
     (* PopUpMenu Buttons *)
     IDM_CLOSEBTN = 100;
     IDM_ADDFILE = 200;
@@ -291,6 +293,8 @@ const
     IDM_LOOKATWIKI = 360;
     IDM_LOOKATMYSPACE = 370;
     IDM_LOOKATGOOGLE = 380;
+
+    IDC_COUNTRIES_CBX = 410;
 
     //MainMenuItemIDs (by Position)
     MMI_PLAYLIST = 0;
@@ -335,6 +339,7 @@ const
   IDC_LNG_GBX = 10102;
   IDC_LANG_CBX = 10103;
   IDC_GENERAL_MAKEMOVABLE_CHK = 10104;
+  IDC_RADIOBROWSER_COUNTRY_CBX = 10105;
   IDD_DLG2_HOTKEYS = 10200;
   IDC_HKEYS_GBX = 10201;
   IDC_PLAYPAUSE_HEKY_STATIC = 10202;
@@ -650,6 +655,12 @@ var
 
     XSongPosTimeOffset : integer = 0;
     YSongPosTimeOffset : integer = 85;
+
+    //Playlist Window
+    XCountriesComboboxOffset : integer = 5;
+    YCountriesComboboxOffset : integer = 5;
+    CountriesComboboxWidth : integer = 180;
+    CountriesComboboxHeight : integer = 25;
 
 implementation
 

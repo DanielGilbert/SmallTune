@@ -52,7 +52,9 @@ uses
   dgstSettings in 'source\dgstSettings.pas',
   Tags in 'source\thirdparty\tags.pas',
   dgstRadioBrowser in 'source\dgstRadioBrowser.pas',
-  dgstPlaylistWindow in 'source\dgstPlaylistWindow.pas';
+  dgstPlaylistWindow in 'source\dgstPlaylistWindow.pas',
+  dgstRadioBrowserApi in 'source\dgstRadioBrowserApi.pas',
+  dgstWinDns in 'source\dgstWinDns.pas';
 
 begin
 
