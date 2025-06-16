@@ -61,14 +61,14 @@ var
   testIndex: Int64;
   hosts: array of string;
 begin
-  status := DnsQuery_A('all.api.radio-browser.info', DNS_TYPE_A, DNS_QUERY_BYPASS_CACHE, nil, QueryResult, nil);
+  status := DnsQuery_A('_api._tcp.radio-browser.info', DNS_TYPE_SRV, DNS_QUERY_BYPASS_CACHE, nil, QueryResult, nil);
   SingleRecord := QueryResult^;
   while (SingleRecord <> nil) do
   begin
-    if SingleRecord.wType = DNS_TYPE_A then
+    if SingleRecord.wType = DNS_TYPE_SRV then
     begin
       SetLength(hosts, Length(hosts) + 1);
-      hosts[Length(hosts) - 1] := ConvertDWordToIp4String(SingleRecord.Data.A.IpAddress);
+      hosts[Length(hosts) - 1] := SingleRecord.Data.SRV.pNameTarget;
     end;
     SingleRecord := SingleRecord.pNext;
   end;
@@ -95,7 +95,7 @@ var
 begin
   host := FetchRandomHost();
   intermediateContent := '';
-  urlContent := fRestClient.GetUrlContent('http://' + host + '/csv/countries');
+  urlContent := fRestClient.GetUrlContent('https://' + host + '/csv/countries');
   n := 0;
   skipIndicator := true;
   for M := 0 to Length(urlContent) - 1 do
