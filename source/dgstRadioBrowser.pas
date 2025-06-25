@@ -129,9 +129,11 @@ var
   x,y: Integer;
   NCM: TNonClientMetrics;
   i: integer;
+  rc: TRect;
   countries: TCountryCodes;
 begin
   Result := 0;
+  countries := nil;
   case uMsg of
     WM_CREATE:
       begin
@@ -152,6 +154,8 @@ begin
         hwndListView := CreateWindowEx(WS_EX_CLIENTEDGE, LISTVIEW_CLASSNAME, nil, WS_CHILD
         or WS_VISIBLE or LVS_REPORT or LVS_OWNERDATA or LVS_SHOWSELALWAYS(* or LVS_SINGLESEL*), XStationsListViewOffset, YStationsListViewOffset, StationsListViewWidth, StationsListViewHeight,
         Wnd, 0, hInstance, nil);
+
+        SendMessage(hwndListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_DOUBLEBUFFER or LVS_EX_FULLROWSELECT);
 
         countries := fRadioBrowserApi.FetchAllCountries;
 
@@ -202,6 +206,17 @@ begin
             end;
         End;
       end;
+
+    WM_SIZE:
+     begin
+       if(wp <> SIZE_MINIMIZED) then
+       begin
+         // get client rect,
+         GetClientRect(wnd, rc);
+         // platz schaffen für BtnToolbar
+         MoveWindow(hwndListView, XStationsListViewOffset, YStationsListViewOffset, rc.Right - 16, rc.Bottom - YStationsListViewOffset - 16, true);
+       end;
+     end;
 
     WM_NOTIFY:
       begin
