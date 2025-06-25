@@ -214,7 +214,7 @@ begin
          // get client rect,
          GetClientRect(wnd, rc);
          // platz schaffen für BtnToolbar
-         MoveWindow(hwndListView, XStationsListViewOffset, YStationsListViewOffset, rc.Right - 16, rc.Bottom - YStationsListViewOffset - 16, true);
+         MoveWindow(hwndListView, XStationsListViewOffset, YStationsListViewOffset, rc.Right - 10, rc.Bottom - YStationsListViewOffset - 5, true);
        end;
      end;
 

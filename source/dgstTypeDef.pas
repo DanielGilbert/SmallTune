@@ -659,7 +659,7 @@ var
     //Radio Browser Window
     XCountriesComboboxOffset : integer = 5;
     YCountriesComboboxOffset : integer = 5;
-    CountriesComboboxWidth : integer = 180;
+    CountriesComboboxWidth : integer = 280;
     CountriesComboboxHeight : integer = 25;
 
     XStationsListViewOffset : integer = 5;
