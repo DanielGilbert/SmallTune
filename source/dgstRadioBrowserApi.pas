@@ -23,7 +23,6 @@ type
     fRestClient: TRestClient;
     function ConvertUTF8String(utf8: UTF8String): AnsiString;
     function FetchHosts : TStringDynArray;
-    function ConvertDWordToIp4String(ipAddress: LongWord): String;
   public
     constructor Create(restClient: TRestClient);
     function FetchAllCountries: TCountryCodes; 
@@ -64,8 +63,6 @@ var
   status: DNS_STATUS;
   QueryResult: PPDNS_RECORD;
   SingleRecord: PDNS_RECORD;
-  randomResult: Integer;
-  testIndex: Int64;
   hosts: TStringDynArray;
 begin
   status := DnsQuery_A(PAnsiChar(DNS_QUERY_HOST), DNS_TYPE_SRV, DNS_QUERY_BYPASS_CACHE, nil, QueryResult, nil);
@@ -80,14 +77,6 @@ begin
     SingleRecord := SingleRecord.pNext;
   end;
   Result := hosts;
-end;
-
-function TRadioBrowserApi.ConvertDWordToIp4String(ipAddress: LongWord): String;
-var
-  Addr: TInAddr;
-begin
-  Addr.S_addr := ipAddress;
-  result := inet_ntoa(Addr);
 end;
 
 function TRadioBrowserApi.ConvertUTF8String(utf8: UTF8String): AnsiString;
@@ -108,49 +97,56 @@ end;
 function TRadioBrowserApi.FetchAllCountries;
 var
   CountryCodes: TCountryCodes;
-  M, I, N: integer;
+  M, N: integer;
   hosts: TStringDynArray;
   host: string;
+  i: integer;
+  foundStations: boolean;
   urlContent: string;
   intermediateContent : string;
   skipIndicator: boolean;
 begin
   hosts := FetchHosts();
-  host := hosts[0];
-  intermediateContent := '';
-  urlContent := fRestClient.SendRequest(host, COUNTRY_ROUTE_CSV, '');
-  urlContent := ConvertUTF8String(urlContent);
-
-
-  n := 0;
-  skipIndicator := true;
-  for M := 0 to Length(urlContent) - 1 do
+  i := 0;
+  foundStations := false;
+  while not foundStations do
   begin
-    case urlContent[M] of
-    #0:
-      begin
-        continue;
-      end;
-    #10,
-    #13:
-      begin
-        intermediateContent := '';
-        skipIndicator := false;
-      end;
-    ',':
-      begin
-        if skipIndicator <> true then
+    host := hosts[i];
+    intermediateContent := '';
+    urlContent := fRestClient.SendRequest(host, COUNTRY_ROUTE_CSV, '');
+    urlContent := ConvertUTF8String(urlContent);
+    n := 0;
+    skipIndicator := true;
+    for M := 0 to Length(urlContent) - 1 do
+    begin
+      case urlContent[M] of
+      #0:
         begin
-        SetLength(CountryCodes, Length(CountryCodes) + 1);
-        CountryCodes[N] := intermediateContent;
-        intermediateContent := '';
-        Inc(N);
-        skipIndicator := true;
+          continue;
         end;
+      #10,
+      #13:
+        begin
+          intermediateContent := '';
+          skipIndicator := false;
+        end;
+      ',':
+        begin
+          if skipIndicator <> true then
+          begin
+           SetLength(CountryCodes, Length(CountryCodes) + 1);
+           CountryCodes[N] := intermediateContent;
+           intermediateContent := '';
+           Inc(N);
+           skipIndicator := true;
+           foundStations := true;
+          end;
+        end;
+      else
+        intermediateContent := intermediateContent + urlContent[M];
       end;
-    else
-      intermediateContent := intermediateContent + urlContent[M];
     end;
+    Inc(i);
   end;
   Result := CountryCodes;
 end;
