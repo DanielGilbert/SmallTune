@@ -18,6 +18,7 @@ uses
 type
   TRadioBrowser = class
   private
+    hwndListView,
     hwndComboBox,
     FHandle : HWND;
     hwndFont: HFont;
@@ -143,10 +144,14 @@ begin
           (y div 2) - (RadioBrowserWindowHeight div 2),
           RadioBrowserWindowWidth, RadioBrowserWindowHeight, true);
 
-        //Toolbar
+        //Combobox
         hwndComboBox := CreateWindowEx(0, COMBOBOXCLASSNAME, nil, WS_CHILD or
           WS_VISIBLE or CBS_DROPDOWNLIST or CBS_HASSTRINGS or WS_VSCROLL,
           XCountriesComboboxOffset, YCountriesComboboxOffset, CountriesComboboxWidth, CountriesComboboxHeight, wnd, IDC_COUNTRIES_CBX, hInstance, nil);
+
+        hwndListView := CreateWindowEx(WS_EX_CLIENTEDGE, LISTVIEW_CLASSNAME, nil, WS_CHILD
+        or WS_VISIBLE or LVS_REPORT or LVS_OWNERDATA or LVS_SHOWSELALWAYS(* or LVS_SINGLESEL*), XStationsListViewOffset, YStationsListViewOffset, StationsListViewWidth, StationsListViewHeight,
+        Wnd, 0, hInstance, nil);
 
         countries := fRadioBrowserApi.FetchAllCountries;
 

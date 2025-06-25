@@ -286,7 +286,7 @@ begin
           (y div 2) - (WindowHeight2 div 2),
           WindowWidth2, WindowHeight2, true);
 
-        hwndPlayListLV := CreateWindowEx(WS_EX_CLIENTEDGE, 'SysListView32', nil, WS_CHILD
+        hwndPlayListLV := CreateWindowEx(WS_EX_CLIENTEDGE, LISTVIEW_CLASSNAME, nil, WS_CHILD
         or WS_VISIBLE or LVS_REPORT or LVS_OWNERDATA or LVS_SHOWSELALWAYS(* or LVS_SINGLESEL*), 10, 10, 200, 230,
         Wnd, 0, hInstance, nil);
 

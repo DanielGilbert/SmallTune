@@ -870,6 +870,9 @@ const
 
 (* ListView *)
 
+  {$EXTERNALSYM LISTVIEW_CLASSNAME}
+  LISTVIEW_CLASSNAME = 'SysListView32';
+
   {$EXTERNALSYM NM_FIRST}
   NM_FIRST                 = 0-  0;       { generic to all controls }
   {$EXTERNALSYM NM_LAST}

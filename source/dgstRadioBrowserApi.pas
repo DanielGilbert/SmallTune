@@ -95,7 +95,7 @@ var
 begin
   host := FetchRandomHost();
   intermediateContent := '';
-  urlContent := fRestClient.GetUrlContent('https://' + host + '/csv/countries');
+  urlContent := fRestClient.SendRequest(host, '/csv/countries', '');
   n := 0;
   skipIndicator := true;
   for M := 0 to Length(urlContent) - 1 do

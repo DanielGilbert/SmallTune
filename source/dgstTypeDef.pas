@@ -656,11 +656,16 @@ var
     XSongPosTimeOffset : integer = 0;
     YSongPosTimeOffset : integer = 85;
 
-    //Playlist Window
+    //Radio Browser Window
     XCountriesComboboxOffset : integer = 5;
     YCountriesComboboxOffset : integer = 5;
     CountriesComboboxWidth : integer = 180;
     CountriesComboboxHeight : integer = 25;
+
+    XStationsListViewOffset : integer = 5;
+    YStationsListViewOffset : integer = 35;
+    StationsListViewWidth : integer = 400;
+    StationsListViewHeight : integer = 300;
 
 implementation
 
