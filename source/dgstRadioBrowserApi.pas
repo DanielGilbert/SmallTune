@@ -7,7 +7,13 @@ uses
   dgstSysUtils,
   WinInet,
   dgstWinDns,
-  dgstRestClient;
+  dgstRestClient,
+  dgstHelper,
+  dgstTypeDef;
+
+const
+  DNS_QUERY_HOST : string = '_api._tcp.radio-browser.info';
+  COUNTRY_ROUTE_CSV : string = '/csv/countries';
 
 type
   TCountryCodes = Array of string;
@@ -15,7 +21,8 @@ type
   TRadiobrowserApi = class
   private
     fRestClient: TRestClient;
-    function FetchRandomHost : string;
+    function ConvertUTF8String(utf8: UTF8String): AnsiString;
+    function FetchHosts : TStringDynArray;
     function ConvertDWordToIp4String(ipAddress: LongWord): String;
   public
     constructor Create(restClient: TRestClient);
@@ -52,16 +59,16 @@ begin
   fRestClient := restClient;
 end;
 
-function TRadioBrowserApi.FetchRandomHost : string;
+function TRadioBrowserApi.FetchHosts : TStringDynArray;
 var
   status: DNS_STATUS;
   QueryResult: PPDNS_RECORD;
   SingleRecord: PDNS_RECORD;
   randomResult: Integer;
   testIndex: Int64;
-  hosts: array of string;
+  hosts: TStringDynArray;
 begin
-  status := DnsQuery_A('_api._tcp.radio-browser.info', DNS_TYPE_SRV, DNS_QUERY_BYPASS_CACHE, nil, QueryResult, nil);
+  status := DnsQuery_A(PAnsiChar(DNS_QUERY_HOST), DNS_TYPE_SRV, DNS_QUERY_BYPASS_CACHE, nil, QueryResult, nil);
   SingleRecord := QueryResult^;
   while (SingleRecord <> nil) do
   begin
@@ -72,8 +79,7 @@ begin
     end;
     SingleRecord := SingleRecord.pNext;
   end;
-  //randomResult := RandomGenerator(0, 2, GetTickCount());
-  Result := hosts[0];
+  Result := hosts;
 end;
 
 function TRadioBrowserApi.ConvertDWordToIp4String(ipAddress: LongWord): String;
@@ -84,18 +90,38 @@ begin
   result := inet_ntoa(Addr);
 end;
 
+function TRadioBrowserApi.ConvertUTF8String(utf8: UTF8String): AnsiString;
+var
+  latin1: AnsiString;
+  ws: WideString;
+  len: Integer;
+begin
+  len := MultiByteToWideChar(CP_UTF8, 0, PAnsiChar(utf8), Length(utf8), nil, 0);
+  SetLength(ws, len);
+  MultiByteToWideChar(CP_UTF8, 0, PAnsiChar(utf8), Length(utf8), PWideChar(ws), len);
+  len := WideCharToMultiByte(28591, 0, PWideChar(ws), Length(ws), nil, 0, nil, nil);
+  SetLength(latin1, len);
+  WideCharToMultiByte(28591, 0, PWideChar(ws), Length(ws), PAnsiChar(latin1), len, nil, nil);
+  Result := latin1;
+end;
+
 function TRadioBrowserApi.FetchAllCountries;
 var
   CountryCodes: TCountryCodes;
   M, I, N: integer;
+  hosts: TStringDynArray;
   host: string;
   urlContent: string;
   intermediateContent : string;
   skipIndicator: boolean;
 begin
-  host := FetchRandomHost();
+  hosts := FetchHosts();
+  host := hosts[0];
   intermediateContent := '';
-  urlContent := fRestClient.SendRequest(host, '/csv/countries', '');
+  urlContent := fRestClient.SendRequest(host, COUNTRY_ROUTE_CSV, '');
+  urlContent := ConvertUTF8String(urlContent);
+
+
   n := 0;
   skipIndicator := true;
   for M := 0 to Length(urlContent) - 1 do
