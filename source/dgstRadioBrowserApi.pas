@@ -23,6 +23,7 @@ type
     fRestClient: TRestClient;
     function ConvertUTF8String(utf8: UTF8String): AnsiString;
     function FetchHosts : TStringDynArray;
+    procedure Sort(var r : array of string; lo, up : integer);
   public
     constructor Create(restClient: TRestClient);
     function FetchAllCountries: TCountryCodes; 
@@ -94,6 +95,31 @@ begin
   Result := latin1;
 end;
 
+procedure TRadioBrowserApi.Sort(var r : array of string; lo, up : integer );
+     var  i, j : integer;
+          tempr : string;
+     begin
+        while (up > lo) do
+        begin
+          i := lo;
+          j := up;
+          tempr := r[lo];
+          while i < j do
+          begin
+               while r[j] > tempr do
+                    j := j-1;
+               r[i] := r[j];
+               while (i<j) and (r[i]<=tempr) do
+                    i := i+1;
+               r[j] := r[i]
+               end;
+          r[i] := tempr;
+          {*** Sort recursively ***}
+          Sort(r,lo,i-1);
+          lo := i+1
+          end
+     end;
+
 function TRadioBrowserApi.FetchAllCountries;
 var
   CountryCodes: TCountryCodes;
@@ -101,6 +127,7 @@ var
   hosts: TStringDynArray;
   host: string;
   i: integer;
+  ignoreComma,
   foundStations: boolean;
   urlContent: string;
   intermediateContent : string;
@@ -109,6 +136,7 @@ begin
   hosts := FetchHosts();
   i := 0;
   foundStations := false;
+  ignoreComma := false;
   while not foundStations do
   begin
     host := hosts[i];
@@ -130,9 +158,14 @@ begin
           intermediateContent := '';
           skipIndicator := false;
         end;
+      '"':
+        begin
+          ignoreComma := not ignoreComma;
+        end;
       ',':
         begin
-          if skipIndicator <> true then
+
+          if skipIndicator <> true and not ignoreComma then
           begin
            SetLength(CountryCodes, Length(CountryCodes) + 1);
            CountryCodes[N] := intermediateContent;
@@ -141,6 +174,11 @@ begin
            skipIndicator := true;
            foundStations := true;
           end;
+
+          if ignoreComma then
+          begin
+           intermediateContent := intermediateContent + urlContent[M];
+          end;
         end;
       else
         intermediateContent := intermediateContent + urlContent[M];
@@ -148,6 +186,7 @@ begin
     end;
     Inc(i);
   end;
+  Sort(CountryCodes, 0, Length(CountryCodes) - 1);
   Result := CountryCodes;
 end;
 
