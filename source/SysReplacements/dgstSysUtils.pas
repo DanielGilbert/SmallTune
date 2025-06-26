@@ -3,6 +3,8 @@ unit dgstSysUtils;
 interface
   uses Windows;
 
+const ListSeparator : Char = ',';
+
 //Sysutils Replacements
 function format(const Format: string; const Args: array of const): string;
 

@@ -9,24 +9,29 @@ uses
   dgstWinDns,
   dgstRestClient,
   dgstHelper,
-  dgstTypeDef;
+  dgstTypeDef,
+  dgstCountryCode,
+  dgstCSVReader;
 
 const
   DNS_QUERY_HOST : string = '_api._tcp.radio-browser.info';
   COUNTRY_ROUTE_CSV : string = '/csv/countries';
+  STATIONSBYCOUNTRY_ROUTE_CSV : string = '/csv/';
 
 type
-  TCountryCodes = Array of string;
+  TStation = String;
+  TStationList = Array of TStation;
 
   TRadiobrowserApi = class
   private
     fRestClient: TRestClient;
-    function ConvertUTF8String(utf8: UTF8String): AnsiString;
+    function ConvertUTF8String(var utf8: UTF8String): AnsiString;
     function FetchHosts : TStringDynArray;
     procedure Sort(var r : array of string; lo, up : integer);
   public
     constructor Create(restClient: TRestClient);
-    function FetchAllCountries: TCountryCodes; 
+    function FetchAllCountries: TCountryCodes;
+    function FetchStationsByCountry(country: String): TStationList; 
   end;
 
 implementation
@@ -80,7 +85,7 @@ begin
   Result := hosts;
 end;
 
-function TRadioBrowserApi.ConvertUTF8String(utf8: UTF8String): AnsiString;
+function TRadioBrowserApi.ConvertUTF8String(var utf8: UTF8String): AnsiString;
 var
   latin1: AnsiString;
   ws: WideString;
@@ -120,7 +125,7 @@ procedure TRadioBrowserApi.Sort(var r : array of string; lo, up : integer );
           end
      end;
 
-function TRadioBrowserApi.FetchAllCountries;
+function TRadioBrowserApi.FetchAllCountries: TCountryCodes;
 var
   CountryCodes: TCountryCodes;
   M, N: integer;
@@ -129,9 +134,12 @@ var
   i: integer;
   ignoreComma,
   foundStations: boolean;
+  urlContent1: UTF8String;
   urlContent: string;
   intermediateContent : string;
   skipIndicator: boolean;
+  csvReader: TCSVReader;
+  test: String;
 begin
   hosts := FetchHosts();
   i := 0;
@@ -141,53 +149,28 @@ begin
   begin
     host := hosts[i];
     intermediateContent := '';
-    urlContent := fRestClient.SendRequest(host, COUNTRY_ROUTE_CSV, '');
-    urlContent := ConvertUTF8String(urlContent);
-    n := 0;
-    skipIndicator := true;
-    for M := 0 to Length(urlContent) - 1 do
+    urlContent1 := fRestClient.SendRequest(host, COUNTRY_ROUTE_CSV, '');
+    urlContent := ConvertUTF8String(urlContent1);
+    csvReader := TCSVReader.Create(urlContent);
+    csvReader.EOLChar := #10;
+    csvReader.EOLLength := 1;
+    csvReader.Quote := '"';
+    csvReader.First(true);
+    While not csvReader.Eof Do
     begin
-      case urlContent[M] of
-      #0:
-        begin
-          continue;
-        end;
-      #10,
-      #13:
-        begin
-          intermediateContent := '';
-          skipIndicator := false;
-        end;
-      '"':
-        begin
-          ignoreComma := not ignoreComma;
-        end;
-      ',':
-        begin
-
-          if skipIndicator <> true and not ignoreComma then
-          begin
-           SetLength(CountryCodes, Length(CountryCodes) + 1);
-           CountryCodes[N] := intermediateContent;
-           intermediateContent := '';
-           Inc(N);
-           skipIndicator := true;
-           foundStations := true;
-          end;
-
-          if ignoreComma then
-          begin
-           intermediateContent := intermediateContent + urlContent[M];
-          end;
-        end;
-      else
-        intermediateContent := intermediateContent + urlContent[M];
-      end;
+      SetLength(CountryCodes, Length(CountryCodes) + 1);
+      test := csvReader.Columns[i];
+      CountryCodes[Length(CountryCodes) - 1] := test;
+      foundStations := true;
+      csvReader.Next()
     end;
-    Inc(i);
   end;
-  Sort(CountryCodes, 0, Length(CountryCodes) - 1);
+  //Sort(CountryCodes, 0, Length(CountryCodes) - 1);
   Result := CountryCodes;
+end;
+
+function TRadioBrowserApi.FetchStationsByCountry(country: String): TStationList;
+begin
 end;
 
 end.

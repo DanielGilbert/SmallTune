@@ -119,7 +119,7 @@ Result := '';
        begin
         if (BytesRead = 0) then Break;
         SetLength(TempBuffer, Size + BytesRead);
-        Move(aBuffer, TempBuffer[Size + 1], BytesRead);
+        Move(aBuffer, TempBuffer[Size], BytesRead);
         Inc(Size, BytesRead);
        end;
        Result := String(TempBuffer);
