@@ -16,7 +16,7 @@ uses
 const
   DNS_QUERY_HOST : string = '_api._tcp.radio-browser.info';
   COUNTRY_ROUTE_CSV : string = '/csv/countries';
-  STATIONSBYCOUNTRY_ROUTE_CSV : string = '/csv/';
+  STATIONSBYCOUNTRY_ROUTE_CSV : string = '/csv/stations/search';
 
 type
   TStation = String;
@@ -159,13 +159,13 @@ begin
     While not csvReader.Eof Do
     begin
       SetLength(CountryCodes, Length(CountryCodes) + 1);
-      test := csvReader.Columns[i];
+      test := csvReader.Columns[0] + ' (' + csvReader.Columns[2] + ')';
       CountryCodes[Length(CountryCodes) - 1] := test;
       foundStations := true;
       csvReader.Next()
     end;
   end;
-  //Sort(CountryCodes, 0, Length(CountryCodes) - 1);
+  Sort(CountryCodes, 0, Length(CountryCodes) - 1);
   Result := CountryCodes;
 end;
 

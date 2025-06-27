@@ -17,7 +17,8 @@ Type
     fBuffer, fPos, fEnd: PAnsiChar;
     fSize: Integer;
     fQuote,
-      fDelimiter: AnsiChar;
+    fDelimiter: AnsiChar;
+    fInternalBuffer: Array of Char;
     fAtEOF, fIsEOF: Boolean;
     fColumns: Array Of TStringPos;
     fColumnCount: Integer;
@@ -54,12 +55,14 @@ Implementation
 
 { TCSVReader }
 
-Constructor TCSVReader.Create(csvData: String; aDelimiter: Char);
+Constructor TCSVReader.Create(csvData: AnsiString; aDelimiter: Char);
 Begin
-  //fStream := aStream;
-  csvData := csvData + fEOLChar + #0;
-  fSize := Length(csvData); //fStream.Size - fStream.Position + 2;
-  fBuffer := PChar(csvData);
+  fSize := Length(csvData) + 2;
+  SetLength(fInternalBuffer, fSize);
+  ReallocMem(fBuffer, fSize);
+  StrLCopy(fBuffer, PChar(csvData), fSize);
+  fBuffer[fSize - 1] := #0;
+  fBuffer[fSize - 2] := #10;
   fPos := fBuffer;
   fEOLChar := #10;
   fEOLLength := 1;
@@ -101,7 +104,9 @@ Var
 Begin
   With fColumns[Index] Do
     If spLen = 0 Then
-      Result := ''
+    Begin
+      Result := '';
+    End
     Else If spFirst^ = fQuote Then Begin
       setLength(Result, spLen - 2);
       p := spFirst + 1;
@@ -182,7 +187,10 @@ Begin
   End;
   fPos := p;
   If (fPos[1] = #0) Then
-    fAtEOF := True
+  begin
+    fAtEOF := True;
+    fIsEOF := True;
+  end
   Else
     inc(fPos, fEOLLength);
 
