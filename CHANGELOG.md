@@ -7,8 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Tags.dll now does the loading of tags, which greatly increases the ability to load tags.
-- Volume can now be controlled in Smalltune.
+- Volume can now be controlled in SmallTune.
 - Pressing the "Play"-button will automatically start the first song from the playlist, if no song has been selected before.
+- Integrates radio-browser.info as a source for internet radio stations
+  - Allows pre-filtering by countries
 
 ### Changed
 - Enlarged size of player window.
@@ -20,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Ability to search for Artists on Google, Wikipedia and MySpace (Yikes!) got removed.
 - Removed quirky feature to drag the window on the display.
 - Removed hook library.
+- Removed drag'n'drop of files (for now).
 
 ### Fixed
 - Crash when selecting certain files.
