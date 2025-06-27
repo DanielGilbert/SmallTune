@@ -20,7 +20,12 @@ const
 
 type
   TStation = String;
-  TStationList = Array of TStation;
+  TStationList = Array of string;
+
+  TFetchConfiguration = record
+    Name: string;
+    Country: string;
+  end;
 
   TRadiobrowserApi = class
   private
@@ -31,7 +36,7 @@ type
   public
     constructor Create(restClient: TRestClient);
     function FetchAllCountries: TCountryCodes;
-    function FetchStationsByCountry(country: String): TStationList; 
+    function FetchStations(fetchConfiguration: TFetchConfiguration): TStationList;
   end;
 
 implementation
@@ -128,26 +133,23 @@ procedure TRadioBrowserApi.Sort(var r : array of string; lo, up : integer );
 function TRadioBrowserApi.FetchAllCountries: TCountryCodes;
 var
   CountryCodes: TCountryCodes;
-  M, N: integer;
   hosts: TStringDynArray;
   host: string;
   i: integer;
-  ignoreComma,
   foundStations: boolean;
   urlContent1: UTF8String;
   urlContent: string;
   intermediateContent : string;
-  skipIndicator: boolean;
   csvReader: TCSVReader;
   test: String;
 begin
   hosts := FetchHosts();
   i := 0;
   foundStations := false;
-  ignoreComma := false;
   while not foundStations do
   begin
     host := hosts[i];
+    Inc(i);
     intermediateContent := '';
     urlContent1 := fRestClient.SendRequest(host, COUNTRY_ROUTE_CSV, '');
     urlContent := ConvertUTF8String(urlContent1);
@@ -169,8 +171,14 @@ begin
   Result := CountryCodes;
 end;
 
-function TRadioBrowserApi.FetchStationsByCountry(country: String): TStationList;
+function TRadioBrowserApi.FetchStations(fetchConfiguration: TFetchConfiguration): TStationList;
+var
+  urlParameters: string;
 begin
+if (fetchConfiguration.Name <> '') then
+begin
+  
+end;
 end;
 
 end.
