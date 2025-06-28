@@ -16,7 +16,7 @@ uses
 const
   DNS_QUERY_HOST : string = '_api._tcp.radio-browser.info';
   COUNTRY_ROUTE_CSV : string = '/csv/countries';
-  STATIONSBYCOUNTRY_ROUTE_CSV : string = '/csv/stations/search';
+  STATIONSSEARCH_ROUTE_CSV : string = '/csv/stations/search';
 
 type
   TStation = String;
@@ -173,12 +173,43 @@ end;
 
 function TRadioBrowserApi.FetchStations(fetchConfiguration: TFetchConfiguration): TStationList;
 var
-  urlParameters: string;
+  Stations: TStationList;
+  hosts: TStringDynArray;
+  host: string;
+  i: integer;
+  foundStations: boolean;
+  urlContent1: UTF8String;
+  urlContent: string;
+  intermediateContent : string;
+  csvReader: TCSVReader;
+  test: String;
 begin
-if (fetchConfiguration.Name <> '') then
-begin
-  
-end;
+  hosts := FetchHosts();
+  i := 0;
+  foundStations := false;
+  while not foundStations do
+  begin
+    host := hosts[i];
+    Inc(i);
+    intermediateContent := '';
+    urlContent1 := fRestClient.SendRequest(host, STATIONSSEARCH_ROUTE_CSV + '?countrycode=de', '');
+    urlContent := ConvertUTF8String(urlContent1);
+    csvReader := TCSVReader.Create(urlContent);
+    csvReader.EOLChar := #10;
+    csvReader.EOLLength := 1;
+    csvReader.Quote := '"';
+    csvReader.First(true);
+    While not csvReader.Eof Do
+    begin
+      SetLength(Stations, Length(Stations) + 1);
+      test := csvReader.Columns[3];
+      Stations[Length(Stations) - 1] := test;
+      foundStations := true;
+      csvReader.Next()
+    end;
+  end;
+  Sort(Stations, 0, Length(Stations) - 1);
+  Result := Stations;
 end;
 
 end.

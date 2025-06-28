@@ -24,11 +24,13 @@ type
     FHandle : HWND;
     hwndFont: HFont;
     fRadioBrowserApi: TRadioBrowserApi;
+    fStations: TStationList;
 
     fMainWindow : HWND;
     fIsShowing: boolean;
     function GetNonClientMetrics: TNonClientMetrics;
     function InstWndProc(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT; stdcall;
+    procedure MakeColumns(const hLV: HWND);
   public
     property IsShowing : Boolean read fIsShowing;
 
@@ -124,6 +126,17 @@ begin
   fIsShowing := false;
 end;
 
+(* Create Columns for Playlist *)
+procedure TRadioBrowser.MakeColumns(const hLV: HWND);
+var
+  lvc        : TLVColumn;
+begin
+  lvc.mask    := LVCF_TEXT or LVCF_WIDTH;
+  lvc.pszText := 'Name';
+  lvc.cx      := 255;
+  ListView_InsertColumn(hLV,0,lvc);
+end;
+
 (* Playlist Window Function *)
 function TRadioBrowser.InstWndProc(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM): LRESULT; stdcall;
 var
@@ -132,6 +145,7 @@ var
   i: integer;
   rc: TRect;
   countries: TCountryCodes;
+  fetchConfiguration: TFetchConfiguration;
 begin
   Result := 0;
   countries := nil;
@@ -160,6 +174,12 @@ begin
 
         countries := fRadioBrowserApi.FetchAllCountries;
 
+        fStations := fRadioBrowserApi.FetchStations(fetchConfiguration);
+
+        MakeColumns(hwndListView);
+
+        ListView_SetItemCountEx(hwndListView, Length(fStations), 0);
+
         for i := 0 to Length(countries) - 1 do
           SendMessage(hwndComboBox, CB_ADDSTRING, 0, INTEGER(PCHAR(String(countries[I]))));
 
@@ -181,12 +201,9 @@ begin
         CBN_SELCHANGE:
           case LoWord(wP) of
 
-            IDC_LANG_CBX:
+            IDC_COUNTRIES_CBX:
               begin
-                if SendDlgItemMessage(Wnd, IDC_RADIOBROWSER_COUNTRY_CBX, CB_GETCURSEL, 0, 0) <> CB_ERR  then
-                begin
-                  //Translator.CurrentLanguage := Translator.AvailableLanguages.fLng[SendDlgItemMessage(hDlgWnd, IDC_LANG_CBX, CB_GETCURSEL, 0, 0)].ISO_Code
-                end;
+                
               end;
 
            end;
@@ -219,10 +236,24 @@ begin
        end;
      end;
 
-    WM_NOTIFY:
+     WM_NOTIFY:
       begin
+         if PNMHdr(lp)^.hwndFrom = hwndListView then
+          case PNMHdr(lp)^.code of
+            LVN_GETDISPINFO:
+            begin
+              if (PLVDispInfo(lP).item.iItem > -1) and (Length(fStations) > 0) then
+              begin
+              //Set Text
+              If (PLVDispInfo(lP).item.mask AND LVIF_TEXT) = LVIF_TEXT then
+                case PLVDispInfo(lP).item.iSubItem of
+                  0: StrPCopy(PLVDispInfo(lP).item.pszText, fStations[PLVDispInfo(lP).item.iItem]);
+                end;
+              end;
 
-      end;
+            end;
+          end;
+        end;
 
       WM_DESTROY:
       begin
