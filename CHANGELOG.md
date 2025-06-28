@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pressing the "Play"-button will automatically start the first song from the playlist, if no song has been selected before.
 - Integrates radio-browser.info as a source for internet radio stations
   - Allows pre-filtering by countries
+  - Allows getting a list of all stations per country
 
 ### Changed
 - Enlarged size of player window.
@@ -26,7 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Crash when selecting certain files.
-- Fixes issue where Window position wasn't correctly updated.
+- Fixes an issue where the window position wasn't correctly updated.
+- Fixes an issue where the program could crash if the there were more than 260 characters in the metadata of files.
 
 ### Under The Hood
 - Code for Playlist Window got finally isolated.
