@@ -380,16 +380,16 @@ begin
               //Set Text
               If (PLVDispInfo(lP).item.mask AND LVIF_TEXT) = LVIF_TEXT then
                 case PLVDispInfo(lP).item.iSubItem of
-                  0: StrPCopy(PLVDispInfo(lP).item.pszText, IntToStr(MediaFle.MediaFileItm.RowID));
+                  0: StrPLCopy(PLVDispInfo(lP).item.pszText, IntToStr(MediaFle.MediaFileItm.RowID), PLVDispInfo(lP).item.cchTextMax - 1);
                   1:
                   begin
                     If (MediaFle.MediaFileItm.Title = '') AND (MediaFle.MediaFileItm.Artist = '') then
-                      StrPCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.FileName)
+                      StrPLCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.FileName, PLVDispInfo(lP).item.cchTextMax - 1)
                     else
-                      StrPCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Title);
+                      StrPLCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Title, PLVDispInfo(lP).item.cchTextMax - 1);
                   end;
-                  2: StrPCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Artist);
-                  3: StrPCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Album);
+                  2: StrPLCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Artist, PLVDispInfo(lP).item.cchTextMax - 1);
+                  3: StrPLCopy(PLVDispInfo(lP).item.pszText, MediaFle.MediaFileItm.Album, PLVDispInfo(lP).item.cchTextMax - 1);
                 end;
               end;
 

@@ -67,6 +67,8 @@ begin
   if Paramstr(1) = '-xdebug' then
     lg.LogMode := lmExtended;
 
+  lg.LogMode := lmExtended;
+
   //Debug
   Lg.WriteLog('Initializing...', 'smalltune.dpr', ltInformation, lmNormal);
 

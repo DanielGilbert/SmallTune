@@ -19,10 +19,13 @@ const
   STATIONSSEARCH_ROUTE_CSV : string = '/csv/stations/search';
 
 type
-  TStation = String;
-  TStationList = Array of string;
+  TStation = packed record
+    Name: string;
+    Url: string;
+  end;
+  TStationList = Array of TStation;
 
-  TFetchConfiguration = record
+  TFetchConfiguration = packed record
     Name: string;
     Country: string;
   end;
@@ -36,7 +39,7 @@ type
   public
     constructor Create(restClient: TRestClient);
     function FetchAllCountries: TCountryCodes;
-    function FetchStations(fetchConfiguration: TFetchConfiguration): TStationList;
+    procedure FetchStations(fetchConfiguration: TFetchConfiguration; var stationList: TStationList);
   end;
 
 implementation
@@ -152,6 +155,8 @@ begin
     Inc(i);
     intermediateContent := '';
     urlContent1 := fRestClient.SendRequest(host, COUNTRY_ROUTE_CSV, '');
+    if (urlContent1 = '') then
+    continue;
     urlContent := ConvertUTF8String(urlContent1);
     csvReader := TCSVReader.Create(urlContent);
     csvReader.EOLChar := #10;
@@ -171,9 +176,8 @@ begin
   Result := CountryCodes;
 end;
 
-function TRadioBrowserApi.FetchStations(fetchConfiguration: TFetchConfiguration): TStationList;
+procedure TRadioBrowserApi.FetchStations(fetchConfiguration: TFetchConfiguration; var stationList: TStationList);
 var
-  Stations: TStationList;
   hosts: TStringDynArray;
   host: string;
   i: integer;
@@ -184,6 +188,7 @@ var
   csvReader: TCSVReader;
   test: String;
 begin
+  SetLength(stationList, 0);
   hosts := FetchHosts();
   i := 0;
   foundStations := false;
@@ -192,7 +197,9 @@ begin
     host := hosts[i];
     Inc(i);
     intermediateContent := '';
-    urlContent1 := fRestClient.SendRequest(host, STATIONSSEARCH_ROUTE_CSV + '?countrycode=de', '');
+    urlContent1 := fRestClient.SendRequest(host, STATIONSSEARCH_ROUTE_CSV + '?countrycode=de&order=name', '');
+    if (urlContent1 = '') then
+    continue;
     urlContent := ConvertUTF8String(urlContent1);
     csvReader := TCSVReader.Create(urlContent);
     csvReader.EOLChar := #10;
@@ -201,15 +208,13 @@ begin
     csvReader.First(true);
     While not csvReader.Eof Do
     begin
-      SetLength(Stations, Length(Stations) + 1);
-      test := csvReader.Columns[3];
-      Stations[Length(Stations) - 1] := test;
+      SetLength(stationList, Length(stationList) + 1);
+      stationList[Length(stationList) - 1].Name := csvReader.Columns[3];
+      stationList[Length(stationList) - 1].Url := csvReader.Columns[4];
       foundStations := true;
       csvReader.Next()
     end;
   end;
-  Sort(Stations, 0, Length(Stations) - 1);
-  Result := Stations;
 end;
 
 end.

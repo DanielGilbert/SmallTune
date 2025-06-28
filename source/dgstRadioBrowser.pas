@@ -14,7 +14,8 @@ uses
   dgstTranslator,
   dgstHelper,
   dgstRadioBrowserApi,
-  dgstCountryCode;
+  dgstCountryCode,
+  dgstLog;
 
 type
   TRadioBrowser = class
@@ -135,6 +136,11 @@ begin
   lvc.pszText := 'Name';
   lvc.cx      := 255;
   ListView_InsertColumn(hLV,0,lvc);
+
+  lvc.mask    := LVCF_TEXT or LVCF_WIDTH;
+  lvc.pszText := 'Url';
+  lvc.cx      := 255;
+  ListView_InsertColumn(hLV,1,lvc);
 end;
 
 (* Playlist Window Function *)
@@ -174,7 +180,7 @@ begin
 
         countries := fRadioBrowserApi.FetchAllCountries;
 
-        fStations := fRadioBrowserApi.FetchStations(fetchConfiguration);
+        fRadioBrowserApi.FetchStations(fetchConfiguration, fStations);
 
         MakeColumns(hwndListView);
 
@@ -244,10 +250,13 @@ begin
             begin
               if (PLVDispInfo(lP).item.iItem > -1) and (Length(fStations) > 0) then
               begin
+              Lg.WriteLog('Fetching Station (' + IntToStr(PLVDispInfo(lP).item.iItem) + ')', 'dgstRadioBrowser.pas', ltInformation, lmExtended);
+              Lg.WriteLog('Url: ' + fStations[PLVDispInfo(lP).item.iItem].Url, 'dgstRadioBrowser.pas', ltInformation, lmExtended);
               //Set Text
               If (PLVDispInfo(lP).item.mask AND LVIF_TEXT) = LVIF_TEXT then
                 case PLVDispInfo(lP).item.iSubItem of
-                  0: StrPCopy(PLVDispInfo(lP).item.pszText, fStations[PLVDispInfo(lP).item.iItem]);
+                  0: StrPLCopy(PLVDispInfo(lP).item.pszText, fStations[PLVDispInfo(lP).item.iItem].Name, PLVDispInfo(lP).item.cchTextMax - 1);
+                  1: StrPLCopy(PLVDispInfo(lP).item.pszText, fStations[PLVDispInfo(lP).item.iItem].Url, PLVDispInfo(lP).item.cchTextMax - 1);
                 end;
               end;
 
