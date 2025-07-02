@@ -5,10 +5,10 @@ interface
 uses
   Windows,
   dgstSysUtils,
+  dgstHelper,
   WinInet,
   dgstWinDns,
   dgstRestClient,
-  dgstHelper,
   dgstTypeDef,
   dgstCountryCode,
   dgstCSVReader;
@@ -144,7 +144,6 @@ var
   urlContent: string;
   intermediateContent : string;
   csvReader: TCSVReader;
-  test: String;
 begin
   hosts := FetchHosts();
   i := 0;
@@ -166,13 +165,14 @@ begin
     While not csvReader.Eof Do
     begin
       SetLength(CountryCodes, Length(CountryCodes) + 1);
-      test := csvReader.Columns[0] + ' (' + csvReader.Columns[2] + ')';
-      CountryCodes[Length(CountryCodes) - 1] := test;
+      CountryCodes[Length(CountryCodes) - 1].Name := csvReader.Columns[0];
+      CountryCodes[Length(CountryCodes) - 1].IsoCode := csvReader.Columns[1];
+      CountryCodes[Length(CountryCodes) - 1].StationCount := StrToIntDef(csvReader.Columns[2], 0);
       foundStations := true;
       csvReader.Next()
     end;
   end;
-  Sort(CountryCodes, 0, Length(CountryCodes) - 1);
+  //Sort(CountryCodes, 0, Length(CountryCodes) - 1);
   Result := CountryCodes;
 end;
 
@@ -197,7 +197,7 @@ begin
     host := hosts[i];
     Inc(i);
     intermediateContent := '';
-    urlContent1 := fRestClient.SendRequest(host, STATIONSSEARCH_ROUTE_CSV + '?countrycode=de&order=name', '');
+    urlContent1 := fRestClient.SendRequest(host, STATIONSSEARCH_ROUTE_CSV + '?countrycode='+ fetchConfiguration.Country +'&order=name', '');
     if (urlContent1 = '') then
     continue;
     urlContent := ConvertUTF8String(urlContent1);

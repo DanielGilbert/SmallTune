@@ -3,26 +3,13 @@ unit dgstCountryCode;
 interface
 
 type
-  TCountryCode = class
-  private
-    fName: String;
-    fIsoCode: String;
-    fStationCount: Integer;
-  public
-    property Name: String read fName;
-    property IsoCode: String read fIsoCode;
-    property StationCount: Integer read fStationCount;
-
-    //rawCSV should contain the string with the all the rawData from the CSV
-    Constructor Create(rawCSV: String);
+  TCountryCode = packed record
+    Name: string;
+    IsoCode: string;
+    StationCount: Integer;
   end;
-  TCountryCodes = Array of string;
+  TCountryCodes = Array of TCountryCode;
 
-implementation
-
-Constructor TCountryCode.Create(rawCSV: String);
-begin
-
-end;
+Implementation
 
 end.

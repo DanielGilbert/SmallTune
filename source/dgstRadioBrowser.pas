@@ -28,6 +28,8 @@ type
     fStations: TStationList;
     fMediaCL: TMediaClass;
     fCurrentPlaylistPos: Integer;
+    countries: TCountryCodes;
+    fetchConfiguration: TFetchConfiguration;
 
     fMainWindow : HWND;
     fIsShowing: boolean;
@@ -152,10 +154,9 @@ function TRadioBrowser.InstWndProc(wnd: HWND; uMsg: UINT; wp: WPARAM; lp: LPARAM
 var
   x,y: Integer;
   NCM: TNonClientMetrics;
-  i: integer;
+  res, i: integer;
+
   rc: TRect;
-  countries: TCountryCodes;
-  fetchConfiguration: TFetchConfiguration;
 begin
   Result := 0;
   countries := nil;
@@ -191,7 +192,7 @@ begin
         ListView_SetItemCountEx(hwndListView, Length(fStations), 0);
 
         for i := 0 to Length(countries) - 1 do
-          SendMessage(hwndComboBox, CB_ADDSTRING, 0, INTEGER(PCHAR(String(countries[I]))));
+          SendMessage(hwndComboBox, CB_ADDSTRING, 0, INTEGER(PCHAR(String(countries[I].Name))));
 
         SendMessage(hwndComboBox, CB_SETCURSEL, 0, 0);
 
@@ -213,7 +214,14 @@ begin
 
             IDC_COUNTRIES_CBX:
               begin
-                
+                if SendMessage(hwndComboBox, CB_GETCURSEL, 0, 0) <> CB_ERR  then
+                begin
+                  res := SendMessage(hwndComboBox, CB_GETCURSEL, 0, 0);
+                  countries := fRadioBrowserApi.FetchAllCountries;
+                  fetchConfiguration.Country := countries[res].IsoCode;
+                  fRadioBrowserApi.FetchStations(fetchConfiguration, fStations);
+                  ListView_SetItemCountEx(hwndListView, Length(fStations), 0);
+                end;
               end;
 
            end;
@@ -256,9 +264,7 @@ begin
               if fCurrentPlaylistPos <> -1 then
               begin
                fMediaCL.RunInternetStream(fStations[fCurrentPlaylistPos].Url);
-                fMediaCL.Play;
-                //SetTooltip(stPlay);
-                //DestroyWindow(hwndPlaylistWnd);
+               fMediaCL.Play;
               end;
             end;
 
