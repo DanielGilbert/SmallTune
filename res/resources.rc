@@ -97,8 +97,8 @@
 401 RCDATA DISCARDABLE "graphics/oldRadio.png"
 
 IDR_VERSION VERSIONINFO
-FILEVERSION 0,4,0,0
-PRODUCTVERSION 0,4,0,0
+FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,0,0,0
 FILEOS 0x00000004
 FILETYPE 0x00000001
 BEGIN
@@ -106,8 +106,8 @@ BEGIN
   BEGIN
     BLOCK "040904B0"
     BEGIN
-      VALUE "FileVersion", "0.4.0.0\0"
-      VALUE "ProductVersion", "0.4.0.0\0"
+      VALUE "FileVersion", "1.0.0.0\0"
+      VALUE "ProductVersion", "1.0.0.0\0"
       VALUE "CompanyName", "Daniel Gilbert\0"
       VALUE "FileDescription", "SmallTune\0"
       VALUE "InternalName", "smalltune\0"

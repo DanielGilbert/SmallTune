@@ -18,8 +18,8 @@ program smalltune;
 * License for the specific language governing rights and limitations
 * under the License.
 *
-* Version             : 0.4.0
-* Date                : 06-2025
+* Version             : 1.0.0
+* Date                : 07-2025
 * Description         : SmallTune is a simple but powerful audioplayer for
 *                       Windows
 ***************************************************************************}
