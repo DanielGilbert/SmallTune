@@ -1940,7 +1940,7 @@ begin
   PlaylistWindow := TPlaylistWindow.Create(MediaCl, awnd, _hInstance);
   RestClient := TRestClient.Create;
   RadiobrowserApi := TRadiobrowserApi.Create(RestClient);
-  RadiobrowserWindow := TRadiobrowser.Create(awnd, _hInstance, RadiobrowserApi);
+  RadiobrowserWindow := TRadiobrowser.Create(awnd, _hInstance, RadiobrowserApi, MediaCL);
 
   if(aWnd = 0) then exit;
   SetForegroundWindow(awnd);

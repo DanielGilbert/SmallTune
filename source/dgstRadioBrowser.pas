@@ -26,6 +26,8 @@ type
     hwndFont: HFont;
     fRadioBrowserApi: TRadioBrowserApi;
     fStations: TStationList;
+    fMediaCL: TMediaClass;
+    fCurrentPlaylistPos: Integer;
 
     fMainWindow : HWND;
     fIsShowing: boolean;
@@ -35,7 +37,7 @@ type
   public
     property IsShowing : Boolean read fIsShowing;
 
-    constructor Create(hMainWindow: HWND; _hInstance: HINST; RadioBrowserApi: TRadiobrowserApi);
+    constructor Create(hMainWindow: HWND; _hInstance: HINST; RadioBrowserApi: TRadiobrowserApi; MediaCL: TMediaClass);
     destructor Destroy; override;
     procedure Close;
     procedure Show;
@@ -75,11 +77,13 @@ begin
   end;
 end;
 
-constructor TRadioBrowser.Create(hMainWindow: HWND; _hInstance: HINST; RadioBrowserApi: TRadiobrowserApi);
+constructor TRadioBrowser.Create(hMainWindow: HWND; _hInstance: HINST; RadioBrowserApi: TRadiobrowserApi; MediaCL: TMediaClass);
 var
   wc : TWndClassEx;
 begin
   fMainWindow := hMainWindow;
+  fMediaCL := MediaCL;
+  fCurrentPlaylistPos := 0;
   fRadioBrowserApi := RadioBrowserApi;
   ZeroMemory(@wc, sizeof(TWndClassEx));
   With wc do
@@ -246,6 +250,18 @@ begin
       begin
          if PNMHdr(lp)^.hwndFrom = hwndListView then
           case PNMHdr(lp)^.code of
+            NM_DBLCLK:
+            begin
+              fCurrentPlaylistPos := ListView_GetNextItem(hwndListView,-1,LVNI_SELECTED);;
+              if fCurrentPlaylistPos <> -1 then
+              begin
+               fMediaCL.RunInternetStream(fStations[fCurrentPlaylistPos].Url);
+                fMediaCL.Play;
+                //SetTooltip(stPlay);
+                //DestroyWindow(hwndPlaylistWnd);
+              end;
+            end;
+
             LVN_GETDISPINFO:
             begin
               if (PLVDispInfo(lP).item.iItem > -1) and (Length(fStations) > 0) then
