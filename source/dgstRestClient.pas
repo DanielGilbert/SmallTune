@@ -70,7 +70,11 @@ BytesRead   : Cardinal;
 pSession    : HINTERNET;
 pConnection : HINTERNET;
 pRequest    : HINTERNET;
+infoBuffer: Array[0..10] of Char;
 Size: Integer;
+dwLength, dwIndex: Cardinal;
+queryResult: longbool;
+statusCode: PChar;
 begin
 Result := '';
  
@@ -114,15 +118,27 @@ Result := '';
   if HTTPSendRequest(pRequest, nil, 0, Pointer(AData), Length(AData)) then
     begin
      try
+     dwIndex := 0;
+     dwLength := Length(infoBuffer);
+      queryResult := HttpQueryInfo(pRequest, HTTP_QUERY_STATUS_CODE, @infoBuffer, dwLength, dwIndex);
+      statusCode := PChar(@infoBuffer);
+      if (statusCode <> '200') then
+      begin
+         InternetCloseHandle(pRequest);
+         InternetCloseHandle(pConnection);
+         InternetCloseHandle(pSession);
+         Result := '';
+         Exit;
+      end;
       Size := 0;
-       while InternetReadFile(pRequest, @aBuffer, SizeOf(aBuffer), BytesRead) do
-       begin
+      while InternetReadFile(pRequest, @aBuffer, SizeOf(aBuffer), BytesRead) do
+      begin
         if (BytesRead = 0) then Break;
         SetLength(TempBuffer, Size + BytesRead);
         Move(aBuffer, TempBuffer[Size], BytesRead);
         Inc(Size, BytesRead);
-       end;
-       Result := String(TempBuffer);
+      end;
+      Result := String(TempBuffer);
      finally
        
      end;
