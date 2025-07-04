@@ -183,18 +183,18 @@ begin
 
         SendMessage(hwndListView, LVM_SETEXTENDEDLISTVIEWSTYLE, 0, LVS_EX_DOUBLEBUFFER or LVS_EX_FULLROWSELECT);
 
-        countries := fRadioBrowserApi.FetchAllCountries;
+        //countries := fRadioBrowserApi.FetchAllCountries;
 
-        fRadioBrowserApi.FetchStations(fetchConfiguration, fStations);
+        //fRadioBrowserApi.FetchStations(fetchConfiguration, fStations);
 
         MakeColumns(hwndListView);
 
-        ListView_SetItemCountEx(hwndListView, Length(fStations), 0);
+        //ListView_SetItemCountEx(hwndListView, Length(fStations), 0);
 
-        for i := 0 to Length(countries) - 1 do
-          SendMessage(hwndComboBox, CB_ADDSTRING, 0, INTEGER(PCHAR(String(countries[I].Name))));
+        //for i := 0 to Length(countries) - 1 do
+        //  SendMessage(hwndComboBox, CB_ADDSTRING, 0, INTEGER(PCHAR(String(countries[I].Name))));
 
-        SendMessage(hwndComboBox, CB_SETCURSEL, 0, 0);
+        //SendMessage(hwndComboBox, CB_SETCURSEL, 0, 0);
 
        // Font
         NCM := GetNonClientMetrics;

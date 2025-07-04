@@ -35,7 +35,7 @@ type
     fRestClient: TRestClient;
     function ConvertUTF8String(var utf8: UTF8String): AnsiString;
     function FetchHosts : TStringDynArray;
-    procedure Sort(var r : array of string; lo, up : integer);
+    procedure SortCountryCodes(var r :TCountryCodes; lo, up : integer );
   public
     constructor Create(restClient: TRestClient);
     function FetchAllCountries: TCountryCodes;
@@ -108,9 +108,9 @@ begin
   Result := latin1;
 end;
 
-procedure TRadioBrowserApi.Sort(var r : array of string; lo, up : integer );
+procedure TRadioBrowserApi.SortCountryCodes(var r : TCountryCodes; lo, up : integer );
      var  i, j : integer;
-          tempr : string;
+          tempr : TCountryCode;
      begin
         while (up > lo) do
         begin
@@ -119,16 +119,16 @@ procedure TRadioBrowserApi.Sort(var r : array of string; lo, up : integer );
           tempr := r[lo];
           while i < j do
           begin
-               while r[j] > tempr do
+               while r[j].Name > tempr.Name do
                     j := j-1;
                r[i] := r[j];
-               while (i<j) and (r[i]<=tempr) do
+               while (i<j) and (r[i].Name<=tempr.Name) do
                     i := i+1;
                r[j] := r[i]
                end;
           r[i] := tempr;
           {*** Sort recursively ***}
-          Sort(r,lo,i-1);
+          SortCountryCodes(r,lo,i-1);
           lo := i+1
           end
      end;
@@ -150,6 +150,14 @@ begin
   foundStations := false;
   while not foundStations do
   begin
+    if (i > length(hosts) - 1) then
+    begin
+      //Looks like no endpoint is working.
+      //We need to handle this.
+      foundStations := true;
+      Result := CountryCodes;
+      Exit;
+    end;
     host := hosts[i];
     Inc(i);
     intermediateContent := '';
@@ -172,7 +180,7 @@ begin
       csvReader.Next()
     end;
   end;
-  //Sort(CountryCodes, 0, Length(CountryCodes) - 1);
+  SortCountryCodes(CountryCodes, 0, Length(CountryCodes) - 1);
   Result := CountryCodes;
 end;
 
@@ -194,6 +202,12 @@ begin
   foundStations := false;
   while not foundStations do
   begin
+   if (i > length(hosts) - 1) then
+    begin
+      //Looks like no endpoint is working.
+      //We need to handle this.
+      Exit;
+    end;
     host := hosts[i];
     Inc(i);
     intermediateContent := '';
